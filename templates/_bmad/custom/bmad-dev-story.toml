@@ -1,0 +1,18 @@
+# Project override for bmad-dev-story.
+# Injects the Storybook-First with Figma workflow as a persistent fact so EVERY
+# dev run in this project follows that loop (read Figma → build → sync back).
+# Merge rule: arrays append, so the base persistent_facts entry is preserved.
+
+[workflow]
+
+persistent_facts = [
+  "file:{project-root}/docs/workflows/storybook-first-with-figma.md",
+  "All UI work in this project follows Atomic Design: atoms → molecules → organisms → screen. Lower layers MUST be built before higher layers; higher layers MUST reuse the existing components, not duplicate them.",
+  "Design tokens (color, spacing, radius, typography) live in tailwind.config.ts and are the single source of truth. Components consume tokens via Tailwind utilities; hardcoded hex/px values are a defect.",
+  "Every component MUST ship with a Storybook story file (.stories.tsx) covering Default plus one story per Figma-documented variant or state.",
+  "After Storybook renders a component, the dev MUST invoke /prototype-to-figma (or equivalent Figma MCP skill) to push the built result back to a 'Built / <Layer>' page in the Figma file and visually diff it against the source frame.",
+  "Visual Validation Loop is MANDATORY before any component is marked done: run `pnpm visual:check --story <id> --figma-node <node-id> --out <component>/<variant>`, then read both _visual-checks/<out>/actual.png and expected.png and walk the Visual Checklist in docs/workflows/storybook-first-with-figma.md. Any drift triggers a fix loop. Manual eyeballing alone is not acceptance — the screenshot comparison is.",
+  "When actual.png and expected.png disagree, design tokens and Figma values are the source of truth. Never measure pixels off either PNG by eye — resolve via Figma MCP `get_variable_defs` / `get_code` and the project's tokens.ts.",
+  "If the Figma MCP server (https://mcp.figma.com/mcp) is unreachable, HALT and ask the user to authenticate or provide exports — do not invent visuals.",
+  "Figma file structure expected: published Variables for design tokens, atomic-design frames (Atoms/Molecules/Organisms/Screen), and Components with complete variant sets. If any of these are missing at runtime, surface the gap to the user — do not silently invent structure or token names.",
+]

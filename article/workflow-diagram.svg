@@ -1,0 +1,354 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 720" font-family="'Inter', 'Segoe UI', system-ui, sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b1e3a"/>
+      <stop offset="0.5" stop-color="#13345f"/>
+      <stop offset="1" stop-color="#0e4a5e"/>
+    </linearGradient>
+
+    <linearGradient id="arrowGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#22d3ee"/>
+      <stop offset="0.5" stop-color="#10b981"/>
+      <stop offset="1" stop-color="#a3e635"/>
+    </linearGradient>
+
+    <!-- Per-step accent gradients (header bars) -->
+    <linearGradient id="g1" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#22d3ee"/><stop offset="1" stop-color="#0891b2"/>
+    </linearGradient>
+    <linearGradient id="g2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3b82f6"/><stop offset="1" stop-color="#1d4ed8"/>
+    </linearGradient>
+    <linearGradient id="g3" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#14b8a6"/><stop offset="1" stop-color="#0f766e"/>
+    </linearGradient>
+    <linearGradient id="g4" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#10b981"/><stop offset="1" stop-color="#047857"/>
+    </linearGradient>
+    <linearGradient id="g5" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#84cc16"/><stop offset="1" stop-color="#4d7c0f"/>
+    </linearGradient>
+
+    <!-- Tagline pill gradients (light tints) -->
+    <linearGradient id="t1" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ecfeff"/><stop offset="1" stop-color="#cffafe"/>
+    </linearGradient>
+    <linearGradient id="t2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#eff6ff"/><stop offset="1" stop-color="#dbeafe"/>
+    </linearGradient>
+    <linearGradient id="t3" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f0fdfa"/><stop offset="1" stop-color="#ccfbf1"/>
+    </linearGradient>
+    <linearGradient id="t4" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ecfdf5"/><stop offset="1" stop-color="#d1fae5"/>
+    </linearGradient>
+    <linearGradient id="t5" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f7fee7"/><stop offset="1" stop-color="#ecfccb"/>
+    </linearGradient>
+
+    <filter id="panelShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="5"/>
+      <feOffset dy="3"/>
+      <feComponentTransfer><feFuncA type="linear" slope="0.5"/></feComponentTransfer>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Reusable arrow head -->
+    <marker id="arrowHead" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="10" markerHeight="10" orient="auto">
+      <path d="M0 0 L12 6 L0 12 Z" fill="url(#arrowGrad)"/>
+    </marker>
+    <marker id="fixLoopHead" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0 0 L12 6 L0 12 Z" fill="#fb7185"/>
+    </marker>
+    <marker id="smallArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0 0 L10 5 L0 10 Z" fill="#4d7c0f"/>
+    </marker>
+
+    <!-- Atom cluster motif (used as small decorations) -->
+    <g id="atomMotif" opacity="0.08">
+      <circle r="40" fill="none" stroke="#22d3ee" stroke-width="1"/>
+      <ellipse rx="40" ry="14" fill="none" stroke="#22d3ee" stroke-width="1" transform="rotate(60)"/>
+      <ellipse rx="40" ry="14" fill="none" stroke="#22d3ee" stroke-width="1" transform="rotate(-60)"/>
+      <circle r="3" fill="#22d3ee"/>
+    </g>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="720" fill="url(#bg)"/>
+  <use href="#atomMotif" x="80" y="100"/>
+  <use href="#atomMotif" x="1120" y="640"/>
+  <use href="#atomMotif" x="1100" y="120"/>
+  <use href="#atomMotif" x="100" y="640"/>
+
+  <!-- Title -->
+  <text x="600" y="50" text-anchor="middle" fill="#ffffff" font-size="26" font-weight="800" letter-spacing="1.5">
+    STORYBOOK-FIRST × FIGMA: ATOMIC DESIGN DEV WORKFLOW
+  </text>
+  <text x="600" y="78" text-anchor="middle" fill="#94a3b8" font-size="13" letter-spacing="0.4">
+    Figma is the source of truth · Atomic layering · Storybook isolation · Pixel-perfect validation · Canvas round-trip
+  </text>
+
+  <!-- Continuous flow arrow underneath panels (decorative) -->
+  <path d="M 50 380 Q 600 280 1150 380" stroke="url(#arrowGrad)" stroke-width="3" fill="none" opacity="0.25"/>
+
+  <!-- ============== PANEL 1 — READ FIGMA ============== -->
+  <g transform="translate(40,130)">
+    <rect width="200" height="480" rx="18" fill="#f8fafc" filter="url(#panelShadow)"/>
+    <!-- header -->
+    <path d="M0 18 a18 18 0 0 1 18 -18 h164 a18 18 0 0 1 18 18 v42 h-200 z" fill="url(#g1)"/>
+    <text x="18" y="26" fill="#ecfeff" font-size="11" font-weight="700" letter-spacing="1.5">STEP 1</text>
+    <text x="18" y="50" fill="#ffffff" font-size="20" font-weight="800">READ FIGMA</text>
+
+    <!-- icon: design canvas with magnifier -->
+    <g transform="translate(100,140)">
+      <rect x="-50" y="-32" width="80" height="56" rx="6" fill="#ffffff" stroke="#0891b2" stroke-width="2"/>
+      <rect x="-44" y="-26" width="22" height="14" rx="2" fill="#67e8f9"/>
+      <rect x="-18" y="-26" width="44" height="6" rx="2" fill="#a5f3fc"/>
+      <rect x="-18" y="-16" width="36" height="6" rx="2" fill="#a5f3fc"/>
+      <rect x="-44" y="-6" width="68" height="6" rx="2" fill="#cffafe"/>
+      <rect x="-44" y="6" width="44" height="6" rx="2" fill="#cffafe"/>
+      <!-- magnifier -->
+      <circle cx="28" cy="22" r="16" fill="#ffffff" fill-opacity="0.6" stroke="#0891b2" stroke-width="3"/>
+      <line x1="40" y1="34" x2="54" y2="48" stroke="#0891b2" stroke-width="4" stroke-linecap="round"/>
+      <circle cx="28" cy="22" r="6" fill="none" stroke="#0891b2" stroke-width="1.5"/>
+    </g>
+
+    <!-- bullets -->
+    <g transform="translate(20,228)" font-size="12.5" fill="#0f172a">
+      <circle cx="5" cy="3" r="3.5" fill="#0891b2"/>
+      <text x="16" y="7" font-weight="600">Figma MCP <tspan font-family="monospace" font-size="11" fill="#0e7490">get_code</tspan></text>
+      <circle cx="5" cy="32" r="3.5" fill="#0891b2"/>
+      <text x="16" y="36">Node + variant set</text>
+      <circle cx="5" cy="61" r="3.5" fill="#0891b2"/>
+      <text x="16" y="65">Props + states</text>
+      <circle cx="5" cy="90" r="3.5" fill="#0891b2"/>
+      <text x="16" y="94"><tspan font-family="monospace" font-size="11" fill="#0e7490">get_variable_defs</tspan></text>
+      <circle cx="5" cy="119" r="3.5" fill="#0891b2"/>
+      <text x="16" y="123">Tokens, not pixels</text>
+    </g>
+
+    <!-- tagline -->
+    <path d="M0 420 h200 v42 a18 18 0 0 1 -18 18 h-164 a18 18 0 0 1 -18 -18 z" fill="url(#t1)"/>
+    <line x1="20" y1="420" x2="180" y2="420" stroke="#67e8f9" stroke-width="1"/>
+    <text x="100" y="446" text-anchor="middle" font-size="11" fill="#0e7490" font-weight="800" letter-spacing="1.2">SOURCE OF TRUTH</text>
+    <text x="100" y="464" text-anchor="middle" font-size="10" fill="#155e75">Figma node-id data</text>
+  </g>
+
+  <!-- ============== PANEL 2 — REUSE CHECK ============== -->
+  <g transform="translate(270,130)">
+    <rect width="200" height="480" rx="18" fill="#f8fafc" filter="url(#panelShadow)"/>
+    <path d="M0 18 a18 18 0 0 1 18 -18 h164 a18 18 0 0 1 18 18 v42 h-200 z" fill="url(#g2)"/>
+    <text x="18" y="26" fill="#dbeafe" font-size="11" font-weight="700" letter-spacing="1.5">STEP 2</text>
+    <text x="18" y="50" fill="#ffffff" font-size="20" font-weight="800">REUSE CHECK</text>
+
+    <!-- icon: stacked atomic design layers -->
+    <g transform="translate(100,140)">
+      <!-- organisms (back) -->
+      <rect x="-60" y="-10" width="120" height="32" rx="6" fill="#bfdbfe" stroke="#1d4ed8" stroke-width="1.5"/>
+      <text x="0" y="11" text-anchor="middle" font-size="10" fill="#1e3a8a" font-weight="700">ORGANISMS</text>
+      <!-- molecules (middle) -->
+      <rect x="-44" y="-28" width="88" height="24" rx="5" fill="#93c5fd" stroke="#1d4ed8" stroke-width="1.5"/>
+      <text x="0" y="-12" text-anchor="middle" font-size="10" fill="#1e3a8a" font-weight="700">MOLECULES</text>
+      <!-- atoms (front) -->
+      <rect x="-30" y="-44" width="60" height="20" rx="4" fill="#60a5fa" stroke="#1d4ed8" stroke-width="1.5"/>
+      <text x="0" y="-30" text-anchor="middle" font-size="10" fill="#ffffff" font-weight="700">ATOMS</text>
+      <!-- checkmark badge -->
+      <circle cx="40" cy="34" r="14" fill="#10b981" stroke="#ffffff" stroke-width="2"/>
+      <path d="M33 34 l5 5 l9 -10" stroke="#ffffff" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+
+    <g transform="translate(20,228)" font-size="12.5" fill="#0f172a">
+      <circle cx="5" cy="3" r="3.5" fill="#1d4ed8"/>
+      <text x="16" y="7" font-weight="600">Scan atoms / molecules</text>
+      <circle cx="5" cy="32" r="3.5" fill="#10b981"/>
+      <text x="16" y="36"><tspan font-weight="700" fill="#047857">REUSE</tspan> if it exists</text>
+      <circle cx="5" cy="61" r="3.5" fill="#3b82f6"/>
+      <text x="16" y="65"><tspan font-weight="700" fill="#1d4ed8">EXTEND</tspan> if variant missing</text>
+      <circle cx="5" cy="90" r="3.5" fill="#f59e0b"/>
+      <text x="16" y="94"><tspan font-weight="700" fill="#b45309">UPDATE</tspan> if stale</text>
+      <circle cx="5" cy="119" r="3.5" fill="#ef4444"/>
+      <text x="16" y="123"><tspan font-weight="700" fill="#b91c1c">CREATE</tspan> only if absent</text>
+    </g>
+
+    <path d="M0 420 h200 v42 a18 18 0 0 1 -18 18 h-164 a18 18 0 0 1 -18 -18 z" fill="url(#t2)"/>
+    <line x1="20" y1="420" x2="180" y2="420" stroke="#93c5fd" stroke-width="1"/>
+    <text x="100" y="446" text-anchor="middle" font-size="11" fill="#1d4ed8" font-weight="800" letter-spacing="1.2">NEVER DUPLICATE</text>
+    <text x="100" y="464" text-anchor="middle" font-size="10" fill="#1e3a8a">Atomic layer respected</text>
+  </g>
+
+  <!-- ============== PANEL 3 — BUILD ============== -->
+  <g transform="translate(500,130)">
+    <rect width="200" height="480" rx="18" fill="#f8fafc" filter="url(#panelShadow)"/>
+    <path d="M0 18 a18 18 0 0 1 18 -18 h164 a18 18 0 0 1 18 18 v42 h-200 z" fill="url(#g3)"/>
+    <text x="18" y="26" fill="#ccfbf1" font-size="11" font-weight="700" letter-spacing="1.5">STEP 3</text>
+    <text x="18" y="50" fill="#ffffff" font-size="20" font-weight="800">BUILD</text>
+
+    <!-- icon: code window with TS badge -->
+    <g transform="translate(100,140)">
+      <rect x="-55" y="-35" width="110" height="70" rx="6" fill="#ffffff" stroke="#0f766e" stroke-width="2"/>
+      <rect x="-55" y="-35" width="110" height="12" rx="6" fill="#0f766e"/>
+      <circle cx="-46" cy="-29" r="2" fill="#fb7185"/>
+      <circle cx="-38" cy="-29" r="2" fill="#fbbf24"/>
+      <circle cx="-30" cy="-29" r="2" fill="#86efac"/>
+      <!-- code lines -->
+      <rect x="-48" y="-15" width="46" height="4" rx="1" fill="#a7f3d0"/>
+      <rect x="2" y="-15" width="22" height="4" rx="1" fill="#86efac"/>
+      <rect x="-48" y="-5" width="34" height="4" rx="1" fill="#5eead4"/>
+      <rect x="-12" y="-5" width="40" height="4" rx="1" fill="#a7f3d0"/>
+      <rect x="-48" y="5" width="60" height="4" rx="1" fill="#86efac"/>
+      <rect x="-48" y="15" width="26" height="4" rx="1" fill="#5eead4"/>
+      <rect x="-18" y="15" width="34" height="4" rx="1" fill="#a7f3d0"/>
+      <!-- TS badge -->
+      <rect x="32" y="22" width="22" height="22" rx="3" fill="#3178c6"/>
+      <text x="43" y="38" text-anchor="middle" fill="#ffffff" font-size="11" font-weight="800" font-family="monospace">TS</text>
+    </g>
+
+    <g transform="translate(20,228)" font-size="12.5" fill="#0f172a">
+      <circle cx="5" cy="3" r="3.5" fill="#0f766e"/>
+      <text x="16" y="7" font-weight="600">React + TypeScript</text>
+      <circle cx="5" cy="32" r="3.5" fill="#0f766e"/>
+      <text x="16" y="36">Tailwind tokens only</text>
+      <circle cx="5" cy="61" r="3.5" fill="#0f766e"/>
+      <text x="16" y="65" font-family="monospace" font-size="11">&lt;Comp&gt;.tsx</text>
+      <circle cx="5" cy="90" r="3.5" fill="#0f766e"/>
+      <text x="16" y="94" font-family="monospace" font-size="11">&lt;Comp&gt;.stories.tsx</text>
+      <circle cx="5" cy="119" r="3.5" fill="#0f766e"/>
+      <text x="16" y="123">Default + per-variant</text>
+    </g>
+
+    <path d="M0 420 h200 v42 a18 18 0 0 1 -18 18 h-164 a18 18 0 0 1 -18 -18 z" fill="url(#t3)"/>
+    <line x1="20" y1="420" x2="180" y2="420" stroke="#5eead4" stroke-width="1"/>
+    <text x="100" y="446" text-anchor="middle" font-size="11" fill="#0f766e" font-weight="800" letter-spacing="1.2">STORYBOOK ISOLATED</text>
+    <text x="100" y="464" text-anchor="middle" font-size="10" fill="#134e4a">No hex · no px · tokens</text>
+  </g>
+
+  <!-- ============== PANEL 4 — VALIDATE ============== -->
+  <g transform="translate(730,130)">
+    <rect width="200" height="480" rx="18" fill="#f8fafc" filter="url(#panelShadow)"/>
+    <path d="M0 18 a18 18 0 0 1 18 -18 h164 a18 18 0 0 1 18 18 v42 h-200 z" fill="url(#g4)"/>
+    <text x="18" y="26" fill="#d1fae5" font-size="11" font-weight="700" letter-spacing="1.5">STEP 4</text>
+    <text x="18" y="50" fill="#ffffff" font-size="20" font-weight="800">VALIDATE</text>
+
+    <!-- icon: side-by-side screens with check -->
+    <g transform="translate(100,140)">
+      <!-- actual (left) -->
+      <rect x="-58" y="-32" width="50" height="50" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2"/>
+      <text x="-33" y="-36" text-anchor="middle" font-size="8" font-weight="700" fill="#047857">actual</text>
+      <circle cx="-33" cy="-7" r="10" fill="#10b981"/>
+      <rect x="-50" y="6" width="34" height="4" rx="1" fill="#86efac"/>
+      <rect x="-50" y="13" width="22" height="4" rx="1" fill="#a7f3d0"/>
+      <!-- arrows between -->
+      <line x1="-5" y1="-8" x2="5" y2="-8" stroke="#047857" stroke-width="1.5"/>
+      <polygon points="5,-8 0,-11 0,-5" fill="#047857"/>
+      <line x1="5" y1="2" x2="-5" y2="2" stroke="#047857" stroke-width="1.5"/>
+      <polygon points="-5,2 0,-1 0,5" fill="#047857"/>
+      <!-- expected (right) -->
+      <rect x="8" y="-32" width="50" height="50" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2"/>
+      <text x="33" y="-36" text-anchor="middle" font-size="8" font-weight="700" fill="#047857">expected</text>
+      <circle cx="33" cy="-7" r="10" fill="#10b981"/>
+      <rect x="16" y="6" width="34" height="4" rx="1" fill="#86efac"/>
+      <rect x="16" y="13" width="22" height="4" rx="1" fill="#a7f3d0"/>
+      <!-- check below -->
+      <circle cx="0" cy="38" r="14" fill="#10b981" stroke="#ffffff" stroke-width="2"/>
+      <path d="M-7 38 l5 5 l9 -10" stroke="#ffffff" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+
+    <g transform="translate(20,228)" font-size="12.5" fill="#0f172a">
+      <circle cx="5" cy="3" r="3.5" fill="#047857"/>
+      <text x="16" y="7" font-family="monospace" font-size="11">pnpm visual:check</text>
+      <circle cx="5" cy="32" r="3.5" fill="#047857"/>
+      <text x="16" y="36">actual.png ↔ expected.png</text>
+      <circle cx="5" cy="61" r="3.5" fill="#047857"/>
+      <text x="16" y="65">Color · Type · Box</text>
+      <circle cx="5" cy="90" r="3.5" fill="#047857"/>
+      <text x="16" y="94">States · A11y · Responsive</text>
+      <circle cx="5" cy="119" r="3.5" fill="#047857"/>
+      <text x="16" y="123">Fix-loop until clean</text>
+    </g>
+
+    <path d="M0 420 h200 v42 a18 18 0 0 1 -18 18 h-164 a18 18 0 0 1 -18 -18 z" fill="url(#t4)"/>
+    <line x1="20" y1="420" x2="180" y2="420" stroke="#6ee7b7" stroke-width="1"/>
+    <text x="100" y="446" text-anchor="middle" font-size="11" fill="#047857" font-weight="800" letter-spacing="1.2">PIXEL-PERFECT GATE</text>
+    <text x="100" y="464" text-anchor="middle" font-size="10" fill="#064e3b">No eyeball QA</text>
+  </g>
+
+  <!-- ============== PANEL 5 — SYNC TO CANVAS ============== -->
+  <g transform="translate(960,130)">
+    <rect width="200" height="480" rx="18" fill="#f8fafc" filter="url(#panelShadow)"/>
+    <path d="M0 18 a18 18 0 0 1 18 -18 h164 a18 18 0 0 1 18 18 v42 h-200 z" fill="url(#g5)"/>
+    <text x="18" y="26" fill="#ecfccb" font-size="11" font-weight="700" letter-spacing="1.5">STEP 5</text>
+    <text x="18" y="50" fill="#ffffff" font-size="20" font-weight="800">SYNC TO CANVAS</text>
+
+    <!-- icon: code → figma round-trip -->
+    <g transform="translate(100,140)">
+      <!-- code box (left) -->
+      <rect x="-58" y="-22" width="46" height="44" rx="4" fill="#ffffff" stroke="#4d7c0f" stroke-width="2"/>
+      <text x="-35" y="-5" text-anchor="middle" font-size="9" font-weight="700" fill="#4d7c0f">Storybook</text>
+      <rect x="-52" y="2" width="20" height="3" rx="1" fill="#84cc16"/>
+      <rect x="-52" y="8" width="34" height="3" rx="1" fill="#a3e635"/>
+      <rect x="-52" y="14" width="26" height="3" rx="1" fill="#84cc16"/>
+      <!-- figma box (right) -->
+      <rect x="12" y="-22" width="46" height="44" rx="4" fill="#ffffff" stroke="#4d7c0f" stroke-width="2"/>
+      <text x="35" y="-5" text-anchor="middle" font-size="9" font-weight="700" fill="#4d7c0f">Figma</text>
+      <!-- figma colored squares -->
+      <rect x="18" y="2" width="10" height="10" rx="1" fill="#f24e1e"/>
+      <rect x="30" y="2" width="10" height="10" rx="1" fill="#a259ff"/>
+      <rect x="42" y="2" width="10" height="10" rx="1" fill="#1abcfe"/>
+      <rect x="18" y="14" width="10" height="6" rx="1" fill="#0acf83"/>
+      <rect x="30" y="14" width="22" height="6" rx="1" fill="#ff7262"/>
+      <!-- arrows curve top + bottom -->
+      <path d="M -12 -10 Q 0 -28 12 -10" stroke="#4d7c0f" stroke-width="2" fill="none" marker-end="url(#smallArrow)"/>
+      <path d="M 12 18 Q 0 36 -12 18" stroke="#4d7c0f" stroke-width="2" fill="none" marker-end="url(#smallArrow)"/>
+    </g>
+
+    <g transform="translate(20,228)" font-size="12.5" fill="#0f172a">
+      <circle cx="5" cy="3" r="3.5" fill="#4d7c0f"/>
+      <text x="16" y="7" font-family="monospace" font-size="11">/prototype-to-figma</text>
+      <circle cx="5" cy="32" r="3.5" fill="#4d7c0f"/>
+      <text x="16" y="36">Page <tspan font-family="monospace" font-size="11">Built / &lt;Layer&gt;</tspan></text>
+      <circle cx="5" cy="61" r="3.5" fill="#4d7c0f"/>
+      <text x="16" y="65">Side-by-side diff</text>
+      <circle cx="5" cy="90" r="3.5" fill="#4d7c0f"/>
+      <text x="16" y="94">Verify parity</text>
+      <circle cx="5" cy="119" r="3.5" fill="#4d7c0f"/>
+      <text x="16" y="123">Mark story done</text>
+    </g>
+
+    <path d="M0 420 h200 v42 a18 18 0 0 1 -18 18 h-164 a18 18 0 0 1 -18 -18 z" fill="url(#t5)"/>
+    <line x1="20" y1="420" x2="180" y2="420" stroke="#bef264" stroke-width="1"/>
+    <text x="100" y="446" text-anchor="middle" font-size="11" fill="#4d7c0f" font-weight="800" letter-spacing="1.2">CANVAS ROUND-TRIP</text>
+    <text x="100" y="464" text-anchor="middle" font-size="10" fill="#365314">Design ↔ Code parity</text>
+  </g>
+
+  <!-- ============== ARROWS BETWEEN PANELS ============== -->
+  <!-- gap between panels: x_right=240 → x_left=270, midY=370 -->
+  <g>
+    <line x1="244" y1="370" x2="262" y2="370" stroke="url(#arrowGrad)" stroke-width="4" stroke-linecap="round" marker-end="url(#arrowHead)" filter="url(#glow)"/>
+    <line x1="474" y1="370" x2="492" y2="370" stroke="url(#arrowGrad)" stroke-width="4" stroke-linecap="round" marker-end="url(#arrowHead)" filter="url(#glow)"/>
+    <line x1="704" y1="370" x2="722" y2="370" stroke="url(#arrowGrad)" stroke-width="4" stroke-linecap="round" marker-end="url(#arrowHead)" filter="url(#glow)"/>
+    <line x1="934" y1="370" x2="952" y2="370" stroke="url(#arrowGrad)" stroke-width="4" stroke-linecap="round" marker-end="url(#arrowHead)" filter="url(#glow)"/>
+  </g>
+
+  <!-- Loop-back arrow from VALIDATE to BUILD (fix loop on drift) -->
+  <g opacity="0.9">
+    <path d="M 830 615 Q 720 680 600 615" stroke="#fb7185" stroke-width="2.5" stroke-dasharray="6 4" fill="none" marker-end="url(#fixLoopHead)"/>
+    <text x="715" y="700" text-anchor="middle" font-size="11" fill="#fda4af" font-style="italic" letter-spacing="0.3">fix-loop on visual drift</text>
+  </g>
+
+  <!-- Footer -->
+  <text x="600" y="710" text-anchor="middle" fill="#64748b" font-size="11" letter-spacing="0.5">
+    Loop per component · One story per atom · Stories chain into molecules · organisms · the final screen
+  </text>
+</svg>

@@ -1,0 +1,8 @@
+
+# --- Storybook-First with Figma module ---
+.env
+_visual-checks/
+playwright-report/
+test-results/
+storybook-static/
+# ---
