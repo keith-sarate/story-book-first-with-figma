@@ -48,27 +48,41 @@ For every UI component or screen story:
 
 ## Step 0 — Refine the incoming story (run ONCE per story, before the loop)
 
-In real projects, the dev agent does not author stories — a PM or architect creates them via `bmad-create-story` from a PRD or epic. What lands in the sprint is typically:
+In real projects the dev agent does not author stories — a PM or architect creates them via `bmad-create-story` from a PRD or epic. What lands in the sprint is typically:
 
 - A title and `As a / I want / So that`
-- Acceptance Criteria scoped to the user-facing behavior
-- A **Figma reference link** in the `References` section
-- Generic Tasks/Subtasks (often: "implement the component", "add tests", "review")
+- Acceptance Criteria scoped to user-facing behavior
+- A **Figma reference link** in `References`
+- Generic Tasks (often: "implement the component", "review")
 
-That story is necessary but not sufficient. Before starting the 5-step loop, the dev agent MUST refine the story to encode this workflow's discipline:
+That story is necessary but not sufficient. The dev agent MUST refine it before starting implementation. In particular: **when this module is adopted into a brownfield project, the first stories will frequently target deep composites (an organism, a screen) when no atoms exist in `src/components/atoms/` yet.** The refinement step handles this by decomposing recursively and producing a bottom-up build plan — not by HALTing on missing dependencies.
 
-1. **Resolve the Figma link.** Pull the `fileKey` and `node-id` out of the link in `References`. Verify the node exists and is reachable via the Figma MCP (`get_code`). If it doesn't resolve, HALT and ask the user.
-2. **Enumerate variants and states** on the Figma node. These become per-variant Tasks and per-variant Storybook stories.
-3. **Rewrite or append the Tasks** so they match the 5-step loop:
-   - Read Figma → Reuse Check → Build → Validate → Sync to Canvas
-   - One task per variant where applicable
-   - Each Build task lists the file path, the props it derives from variants, and the token references
-   - Each Validate task includes the exact `pnpm visual:check` command for that variant
-4. **Strengthen the Acceptance Criteria** so they reference the Visual Validation Loop, the no-hardcoded-tokens rule, and the Storybook-story-per-variant requirement.
-5. **Check scope.** If the story's scope is too big — e.g., "build all the molecules" — HALT and surface to the user that the story should be split using the discovery pattern from `1-2-0-atoms-discovery.md` (one story for discovery, N stories for implementation, one for bulk sync). Do not silently absorb the bigger scope.
-6. **Persist the edits** to the story file before starting implementation, so the refined version is the artifact of record.
+The refinement actions:
 
-Only after the story is refined does the per-component loop below begin.
+1. **Resolve the Figma link.** Pull `fileKey` and `node-id` from the link in References. Verify the node resolves via Figma MCP (`get_code`). If not, HALT and ask the user.
+
+2. **Classify the target.** Decide whether the Figma node represents an atom, molecule, organism, or screen — based on what it composes and where it sits in the design system. Persist the classification in the story's Dev Notes.
+
+3. **Decompose recursively.** If the target is anything but a leaf atom, walk every visual primitive it composes and identify the lower-layer component each one maps to. Recurse all the way down to atoms. The output is a *dependency tree* with the target at the root and atoms at the leaves.
+
+4. **Run a Reuse Check on every node of the tree** (target + every dependency):
+   - **REUSE** — exists at `src/components/<layer>/<Name>/` and matches Figma → import it, no work.
+   - **EXTEND** — exists, but a variant the story needs is missing → mark for extension.
+   - **UPDATE** — exists but conflicts with Figma (design moved) → HALT and ask the user before proceeding.
+   - **OFF-LAYER** (brownfield case) — exists somewhere in the codebase but NOT under the atomic structure (e.g., a flat `src/components/Button.tsx` with no `atoms/` parent). HALT and ask the user: refactor into the proper layer, reuse as-is, or build a parallel atomic version. Do not decide silently.
+   - **CREATE** — does not exist → mark for creation at the correct layer folder (`src/components/atoms/...`, `molecules/...`, etc.).
+
+5. **Produce a bottom-up build plan.** Rewrite the story's Tasks to schedule one execution of the 5-step loop per CREATE or EXTEND, in dependency order (atoms first, then their consumers, finally the target). Each task spells out the component name, the layer folder, the Figma node-id it derives from, the variants/states to cover, and the `pnpm visual:check` command for each variant.
+
+6. **Strengthen the Acceptance Criteria** so they reference the Visual Validation Loop, the no-hardcoded-tokens rule, the Storybook-story-per-variant requirement, and the layer-correctness rule (atoms in `atoms/`, molecules in `molecules/`, etc.).
+
+7. **Surface the build plan to the user** if more than three components will be created. List the components, their layers, and their order; ask for confirmation before persisting. This prevents a "build one badge" story silently expanding into twenty components without anyone noticing.
+
+8. **Detect explicit scope errors.** If the story's stated scope is itself a discovery-shaped statement — e.g., "build all the molecules", "implement the entire icon library" — HALT and surface that this should be split via the discovery pattern (one story for discovery, N stories for implementation, one for bulk sync). This is different from the recursive build above: here the problem is the story's framing, not the dependency tree.
+
+9. **Persist the edits** to the story file before starting implementation. The refined version is the artifact of record.
+
+Only after the story is refined does the per-component loop below begin. Each task from the build plan executes the loop independently — atoms first, then their consumers, finally the target — and each one passes through visual validation and Figma sync-back before the next starts.
 
 ## Per-Component Loop (apply to every component in every story)
 
