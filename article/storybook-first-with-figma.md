@@ -230,13 +230,6 @@ git submodule add "$REPO" vendor/sb-figma
 vendor/sb-figma/install.sh .
 ```
 
-**Dry-run first (always a good idea):**
-
-```bash
-/tmp/sb-figma/install.sh /path/to/your/project --dry-run \
-  --file-key abc123 --atoms 4:581 --molecules 4:726 --organisms 4:850 --screen 4:1015
-```
-
 ### What lands in the target
 
 ```

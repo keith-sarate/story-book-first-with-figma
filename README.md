@@ -87,15 +87,6 @@ vendor/sb-figma/install.sh .
 
 Pins the module to a known revision; update later with `git submodule update --remote`.
 
-### Dry-run preview
-
-```bash
-/tmp/sb-figma/install.sh /path/to/your/project --dry-run \
-  --file-key abc123 --atoms 4:581 --molecules 4:726 --organisms 4:850 --screen 4:1015
-```
-
-Prints every file that would be created or appended, writes nothing.
-
 ---
 
 ## After install — five things to do
