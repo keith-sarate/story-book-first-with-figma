@@ -39,6 +39,7 @@ TEMPLATES="${PKG_ROOT}/templates"
 TARGET=""
 FIGMA_FILE_KEY=""
 PM=""                  # package manager: pnpm | yarn | npm | bun (auto-detected)
+MODE="bmad"            # bmad = BMad-compatible (default) | skill = Claude Code skill (no BMad)
 INSTALL_DEPS=1         # 1 = auto-install playwright + dotenv; --no-install-deps to skip
 WRITE_PKG_SCRIPT=1     # 1 = add scripts.visual:check to package.json; --no-package-json to skip
 COPY_DOTENV=1          # 1 = create .env from .env.example; --no-dotenv to skip
@@ -77,6 +78,9 @@ ${BOLD}Usage:${RESET}
   install.sh [TARGET_DIR] [options]
 
 ${BOLD}Options:${RESET}
+  --mode bmad|skill     Install flavor (default: bmad)
+                          bmad  → drops _bmad/custom/bmad-dev-story.toml; runs via /bmad-dev-story
+                          skill → drops .claude/skills/storybook-figma/SKILL.md; runs via /storybook-figma
   --file-key KEY        Figma file key (the part after /design/)
   --pm pnpm|yarn|npm|bun   Force package manager (default: auto-detect via lockfile)
   --no-install-deps     Skip installing Playwright + dotenv
@@ -91,6 +95,9 @@ ${BOLD}Examples:${RESET}
   install.sh ./my-project --file-key 7vcHVM7siztlW4xId0ClVZ
   install.sh ./my-project     # interactive — will prompt for the file key
 
+  # Standalone Claude Code skill (no BMad dependency):
+  install.sh ./my-project --mode skill --file-key KEY
+
   # CI / scripting — everything inline, no prompts:
   install.sh ./my-project -y --file-key KEY --pm pnpm
 
@@ -104,6 +111,7 @@ while [[ $# -gt 0 ]]; do
     -y|--yes) NON_INTERACTIVE=1; shift ;;
     -n|--dry-run) DRY_RUN=1; shift ;;
     -f|--force) FORCE=1; shift ;;
+    --mode) MODE="$2"; shift 2 ;;
     --file-key) FIGMA_FILE_KEY="$2"; shift 2 ;;
     --pm) PM="$2"; shift 2 ;;
     --no-install-deps) INSTALL_DEPS=0; shift ;;
@@ -116,6 +124,11 @@ while [[ $# -gt 0 ]]; do
       shift ;;
   esac
 done
+
+case "$MODE" in
+  bmad|skill) ;;
+  *) die "Invalid --mode: $MODE (expected 'bmad' or 'skill')" ;;
+esac
 
 # ─── Resolve target dir ────────────────────────────────────────────────────
 if [ -z "$TARGET" ]; then
@@ -187,9 +200,16 @@ fmt_dotenv() {
   fi
 }
 
+fmt_mode() {
+  if [ "$MODE" = "skill" ]; then echo "skill (Claude Code skill — no BMad needed)"
+  else echo "bmad (BMad-compatible — default)"
+  fi
+}
+
 cat <<EOF
 
 ${BOLD}Will install with these values:${RESET}
+  ${DIM}mode                =${RESET} $(fmt_mode)
   ${DIM}FIGMA_FILE_KEY      =${RESET} ${FIGMA_FILE_KEY}
   ${DIM}package manager     =${RESET} $(fmt_pm)
   ${DIM}package.json        =${RESET} $(fmt_pkg)
@@ -338,7 +358,11 @@ install_deps() {
 log "Installing files…"
 write_file  "${TEMPLATES}/docs/workflows/storybook-first-with-figma.md"  "${TARGET}/docs/workflows/storybook-first-with-figma.md"
 copy_binary "${TEMPLATES}/docs/workflows/storybook-first-with-figma.svg" "${TARGET}/docs/workflows/storybook-first-with-figma.svg"
-write_file  "${TEMPLATES}/_bmad/custom/bmad-dev-story.toml"              "${TARGET}/_bmad/custom/bmad-dev-story.toml"
+if [ "$MODE" = "skill" ]; then
+  write_file "${TEMPLATES}/skill/storybook-figma/SKILL.md"               "${TARGET}/.claude/skills/storybook-figma/SKILL.md"
+else
+  write_file "${TEMPLATES}/_bmad/custom/bmad-dev-story.toml"             "${TARGET}/_bmad/custom/bmad-dev-story.toml"
+fi
 write_file  "${TEMPLATES}/scripts/visual-check.mjs"                      "${TARGET}/scripts/visual-check.mjs" "0755"
 write_file  "${TEMPLATES}/dotfiles/mcp.json"                             "${TARGET}/.mcp.json"
 write_file  "${TEMPLATES}/dotfiles/env.example"                          "${TARGET}/.env.example"
@@ -367,7 +391,7 @@ ${BOLD}One thing you have to do now:${RESET}
   • Open ${CYAN}.env${RESET} and paste a Figma personal access token in ${BOLD}FIGMA_TOKEN${RESET}
     (mint one at https://www.figma.com/settings → Personal access tokens).
 
-${BOLD}On first ${CYAN}/bmad-dev-story${RESET}${BOLD} run, the agent will guide you through anything else missing${RESET}
+${BOLD}On first $([ "$MODE" = "skill" ] && printf "${CYAN}/storybook-figma${RESET}${BOLD}" || printf "${CYAN}/bmad-dev-story${RESET}${BOLD}") run, the agent will guide you through anything else missing${RESET}
 ${BOLD}(approve Figma MCP via /mcp, etc) — you don't need to remember the rest.${RESET}
 EOF
 
@@ -387,7 +411,21 @@ if [ "$SCRIPT_STATUS" != "ready" ]; then
 EOF
 fi
 
-cat <<EOF
+if [ "$MODE" = "skill" ]; then
+  cat <<EOF
+
+${BOLD}Then:${RESET}
+  In Claude Code, paste a Figma node URL and invoke
+  ${CYAN}/storybook-figma <figma-url>${RESET} — the skill handles preflight, decomposition,
+  bottom-up build, and visual validation in a single conversation. No story file needed.
+
+${BOLD}Docs:${RESET}
+  • Manual: docs/workflows/storybook-first-with-figma.md
+  • Skill:  .claude/skills/storybook-figma/SKILL.md
+
+EOF
+else
+  cat <<EOF
 
 ${BOLD}Then:${RESET}
   Author UI stories with a Figma link in References, then invoke
@@ -397,3 +435,4 @@ ${BOLD}Docs:${RESET}
   • Manual: docs/workflows/storybook-first-with-figma.md
 
 EOF
+fi

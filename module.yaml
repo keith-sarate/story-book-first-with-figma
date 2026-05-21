@@ -1,18 +1,30 @@
 name: story-book-first-with-figma
-version: 0.2.0
+version: 0.3.0
 description: |
-  Storybook-First with Figma — a BMad-compatible adoption module that drops the
-  workflow manual, dev-story customization, Figma MCP wiring, and visual
-  validation script into a target project.
+  Storybook-First with Figma — installs as a BMad customization (default) or a
+  standalone Claude Code skill (--mode skill). Drops the workflow manual, the
+  agent customization, Figma MCP wiring, and visual validation script into a
+  target project.
 
 author: Keith Sarate <keith.sarate@objectedge.com>
 license: MIT
-type: bmad-customization
+type: bmad-customization-or-claude-skill
+
+modes:
+  bmad:
+    description: BMad-compatible — injects workflow as bmad-dev-story persistent_facts. Default.
+    trigger: /bmad-dev-story <story-file>
+    requires:
+      bmad_core: ">=0.1"
+      bmad_modules:
+        - bmm   # for bmad-dev-story
+  skill:
+    description: Standalone Claude Code skill — invoked with a Figma URL, no BMad needed.
+    trigger: /storybook-figma <figma-url>
+    requires:
+      claude_code: ">=any"
 
 requires:
-  bmad_core: ">=0.1"
-  bmad_modules:
-    - bmm   # for bmad-dev-story
   runtime:
     node: ">=20"
     pnpm: ">=9"
@@ -21,24 +33,31 @@ requires:
     - figma-account    # personal access token required
 
 installs:
-  files:
-    - target: docs/workflows/storybook-first-with-figma.md
-      source: templates/docs/workflows/storybook-first-with-figma.md
-    - target: docs/workflows/storybook-first-with-figma.svg
-      source: templates/docs/workflows/storybook-first-with-figma.svg
-    - target: _bmad/custom/bmad-dev-story.toml
-      source: templates/_bmad/custom/bmad-dev-story.toml
-    - target: scripts/visual-check.mjs
-      source: templates/scripts/visual-check.mjs
-      mode: "0755"
-    - target: .mcp.json
-      source: templates/dotfiles/mcp.json
-      requires_approval: true   # writing .mcp.json may need explicit user OK
-    - target: .env.example
-      source: templates/dotfiles/env.example
-  appends:
-    - target: .gitignore
-      source: templates/dotfiles/gitignore.append
+  shared:
+    files:
+      - target: docs/workflows/storybook-first-with-figma.md
+        source: templates/docs/workflows/storybook-first-with-figma.md
+      - target: docs/workflows/storybook-first-with-figma.svg
+        source: templates/docs/workflows/storybook-first-with-figma.svg
+      - target: scripts/visual-check.mjs
+        source: templates/scripts/visual-check.mjs
+        mode: "0755"
+      - target: .mcp.json
+        source: templates/dotfiles/mcp.json
+        requires_approval: true   # writing .mcp.json may need explicit user OK
+      - target: .env.example
+        source: templates/dotfiles/env.example
+    appends:
+      - target: .gitignore
+        source: templates/dotfiles/gitignore.append
+  bmad_only:
+    files:
+      - target: _bmad/custom/bmad-dev-story.toml
+        source: templates/_bmad/custom/bmad-dev-story.toml
+  skill_only:
+    files:
+      - target: .claude/skills/storybook-figma/SKILL.md
+        source: templates/skill/storybook-figma/SKILL.md
 
 variables:
   FIGMA_FILE_KEY:
@@ -47,4 +66,5 @@ variables:
 
 postinstall:
   - "Open .env and paste a Figma personal access token in FIGMA_TOKEN (the installer creates .env from .env.example with the file key already filled)"
-  - "Author UI stories with a Figma link in References; the dev agent runs a preflight check and then Step 0 (refinement + recursive build plan) on each one — it will guide you through /mcp approval and any other missing setup on first run"
+  - "BMad mode: author UI stories with a Figma link in References; the dev agent runs preflight + Step 0 on each one — it will guide you through /mcp approval and any other missing setup on first run"
+  - "Skill mode: paste a Figma node URL and invoke /storybook-figma <figma-url> — the skill runs preflight + Step 0 + bottom-up build in one conversation; no story file needed"

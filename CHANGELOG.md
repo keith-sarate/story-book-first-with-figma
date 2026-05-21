@@ -3,6 +3,17 @@
 All notable changes to the `storybook-first-with-figma` module are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project adheres to [semver](https://semver.org/).
 
+## [0.3.0] — 2026-05-21
+
+### Added
+- **Skill install mode (`--mode skill`)** — a standalone Claude Code skill (`.claude/skills/storybook-figma/SKILL.md`) that runs the entire workflow (preflight → decomposition → bottom-up build → visual validation → optional sync-back) from a single Figma URL, with no BMad, story file, or sprint dependency. The user invokes `/storybook-figma <figma-url>` instead of `/bmad-dev-story <story>`. Same workflow rules as BMad mode, surfaced as skill instructions instead of `persistent_facts`.
+- Installer `--mode bmad|skill` flag (default: `bmad`) — BMad mode stays the default and behaves identically to 0.2.0; skill mode skips `_bmad/custom/bmad-dev-story.toml` and drops the skill file instead. All shared artifacts (workflow manual, visual-check script, `.mcp.json`, `.env.example`) are installed in both modes.
+- `templates/skill/storybook-figma/SKILL.md` — the skill source, with frontmatter `name`/`description` tuned for the Claude Code skill auto-trigger.
+
+### Changed
+- Installer summary, post-install instructions, and "next steps" message now branch on `--mode` (mention `/storybook-figma` vs `/bmad-dev-story`).
+- README documents the two modes side-by-side; BMad remains the default for backwards-compatible installs.
+
 ## [0.2.0] — 2026-05-21
 
 ### Added
@@ -34,5 +45,6 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 - Article (PDF + Markdown) explaining the workflow and how to adopt it
 - `docs/adoption-guide.md` — reference-style playbook for porting the workflow by hand
 
+[0.3.0]: https://github.com/keith-sarate/story-book-first-with-figma/releases/tag/v0.3.0
 [0.2.0]: https://github.com/keith-sarate/story-book-first-with-figma/releases/tag/v0.2.0
 [0.1.0]: https://github.com/keith-sarate/story-book-first-with-figma/releases/tag/v0.1.0
