@@ -1,7 +1,7 @@
 ---
 title: "Storybook-First with Figma"
 subtitle: "A bidirectional workflow for pixel-perfect atomic design"
-author: "Object Edge engineering"
+author: "Keith Sarate · Object Edge"
 date: 2026-05-20
 ---
 

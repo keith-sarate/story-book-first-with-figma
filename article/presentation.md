@@ -4,7 +4,7 @@ theme: default
 paginate: true
 size: 16:9
 title: Storybook-First with Figma
-author: Object Edge engineering
+author: Keith Sarate (Object Edge)
 ---
 
 <!-- _class: lead -->
@@ -13,7 +13,7 @@ author: Object Edge engineering
 
 ### A bidirectional workflow for pixel-perfect atomic design
 
-Object Edge engineering
+Keith Sarate · Object Edge
 
 ---
 
@@ -99,9 +99,28 @@ Three files do the work:
 
 - `_bmad/custom/bmad-dev-story.toml` — the policy (loaded as `persistent_facts`)
 - `docs/workflows/storybook-first-with-figma.md` — the operating manual
-- `scripts/visual-check.mjs` — ~70 lines, Playwright + Figma REST
+- `scripts/visual-check.mjs` — ~80 lines, Playwright + Figma REST + Storybook reachability probe
 
 The agent is bound by these rules **regardless of who authored the story**.
+
+---
+
+## Scope guard + preflight
+
+Before any UI story starts, the agent runs two gates baked into `persistent_facts`:
+
+**Scope guard** — classifies the story as UI or NON-UI. NON-UI stories (backend, infra, docs, schema) skip everything below and fall back to stock BMad.
+
+**Preflight check** — for UI stories, verifies in order:
+
+1. Figma MCP reachable
+2. `FIGMA_TOKEN` set in `.env`
+3. `scripts/visual-check.mjs` present
+4. Playwright installed
+5. `package.json` has `visual:check` script
+6. Storybook set up in the project
+
+Each failure HALTs with the **exact** remediation. Plus: the agent auto-starts Storybook in the background if the dev server is down.
 
 ---
 
@@ -142,22 +161,24 @@ keith-sarate/story-book-first-with-figma/main/install.sh)
 
 The script:
 
-- Fetches its templates
-- Prompts for your Figma file key and four node-ids (Atoms / Molecules / Organisms / Screen)
-- Drops **15 files** into the current directory
+- Prompts only for your Figma file key
+- Drops **7 files** into the current directory
+- Copies `.env.example` → `.env` (file key prefilled, token empty)
+- Adds `visual:check` to `package.json` scripts
+- Installs Playwright + dotenv via your package manager
 - Prints next steps
 
-Review the diff in VS Code, commit when you're happy.
+Each auto-wiring step has an opt-out flag.
 
 ---
 
-## After install — 3 one-time steps
+## After install — 1 thing to do
 
-1. In Claude Code, invoke `/mcp` and approve the `figma` server
-2. `cp .env.example .env` and paste a Figma personal access token
-3. Invoke `/bmad-dev-story` with the path to the story you want to run
+**Open `.env` and paste your Figma personal access token in `FIGMA_TOKEN`.**
 
-The agent picks up the story, executes **Step 0** (refinement + recursive build plan), confirms with you if many components will be created, then runs the 5-step loop **bottom-up**.
+That's it. Invoke `/bmad-dev-story <story.md>` and the agent's preflight will guide you through anything else missing (approve `/mcp`, install Storybook, etc) — you don't have to remember the manual steps.
+
+Once preflight passes, the agent executes **Step 0** (refinement + recursive build plan), confirms with you if many components will be created, then runs the 5-step loop **bottom-up**.
 
 ---
 
@@ -165,15 +186,17 @@ The agent picks up the story, executes **Step 0** (refinement + recursive build 
 
 ```
 <target>/
-├── .mcp.json                                       # Figma MCP server
-├── .env.example                                    # FIGMA_TOKEN, FIGMA_FILE_KEY
+├── .mcp.json                                           # Figma MCP server
+├── .env.example  →  .env                               # FIGMA_TOKEN, FIGMA_FILE_KEY
+├── .gitignore                                          # appended
 ├── docs/workflows/storybook-first-with-figma.{md,svg}
-├── scripts/visual-check.mjs                        # Playwright + Figma REST
-├── _bmad/custom/bmad-dev-story.toml                # persistent_facts injection
-└── _bmad-output/implementation-artifacts/          # 8 example story files
+├── scripts/visual-check.mjs                            # Playwright + Figma REST
+└── _bmad/custom/bmad-dev-story.toml                    # persistent_facts injection
 ```
 
-The installer **never modifies BMad core or module files** — only `_bmad/custom/`, `_bmad-output/`, and project-level paths.
+The installer **never modifies BMad core or module files** — only `_bmad/custom/` and project-level paths.
+
+Stories themselves are **per-project** — authored by your PM via `bmad-create-story` from a PRD, with a Figma link in References.
 
 ---
 
@@ -192,6 +215,9 @@ The installer **never modifies BMad core or module files** — only `_bmad/custo
 <!-- _class: lead -->
 
 # Thank you
+
+**Keith Sarate** · Object Edge
+keith.sarate@objectedge.com
 
 **Repository**
 github.com/keith-sarate/story-book-first-with-figma

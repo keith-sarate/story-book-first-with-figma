@@ -2,6 +2,8 @@
 
 > An installable BMad customization module for pixel-perfect Atomic Design from Figma.
 
+**Authored by Keith Sarate** ([keith.sarate@objectedge.com](mailto:keith.sarate@objectedge.com)) · Object Edge
+
 ![Workflow diagram — Read Figma → Reuse Check → Build → Validate → Sync to Canvas](article/workflow-diagram.svg)
 
 After install, every UI story your team points the BMad dev agent at follows the same loop: **Read Figma → Reuse Check → Build → Validate → Sync to Canvas** — gated by an automated screenshot diff against Figma that can't be eyeballed away.
@@ -98,3 +100,5 @@ storybook-first-with-figma/
 ---
 
 [CHANGELOG](CHANGELOG.md) · [Adoption Guide](docs/adoption-guide.md) · [Article (PDF)](article/storybook-first-with-figma.pdf) · [License: MIT](LICENSE)
+
+© 2026 Object Edge · Authored by Keith Sarate
