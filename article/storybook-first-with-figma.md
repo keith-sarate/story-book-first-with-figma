@@ -255,6 +255,24 @@ target/
 
 The installer never touches BMad core or module files. It only writes to `_bmad/custom/`, `_bmad-output/`, and project-level paths.
 
+### These stories are scaffolding, not a sprint plan
+
+The shipped files under `_bmad-output/implementation-artifacts/` are *examples* of what a well-shaped story looks like for this workflow. The real flow in BMad doesn't run the shipped stories as a sprint — it runs:
+
+1. A PM or architect picks up a requirement and creates a story (via `bmad-create-story` or equivalent). The story lands with a Figma reference link in its References section.
+2. The dev agent picks that story up and executes the 5-step loop against the Figma link, bound by the `persistent_facts` in `_bmad/custom/bmad-dev-story.toml`.
+
+The shipped stories show *what shape a story needs* for the dev agent to execute against this workflow: clear scope, a Figma node-id in References, Acceptance Criteria tied to Figma variants, Tasks that match the loop.
+
+**The module is not a sprint planner.** Stories come from your own `bmad-create-story` runs, driven by PM and architect agents working from PRDs, epics, and design specs. The dev agent *executes* stories; it does not author them.
+
+**The shipped sprint is not one-size-fits-all.** A single `1-3-molecules.md` story that builds every molecule works for a demo with four molecules. It gets unwieldy past six or seven. For larger projects, apply the discovery pattern from `1-2-0-atoms-discovery.md` to molecules and organisms too — one story for discovery, N stories for implementation, one story for bulk sync.
+
+**The first thing the dev agent does is refine the story.** When `bmad-dev-story` activates on a PM-authored story, BMad's customization resolver reads `_bmad/custom/bmad-dev-story.toml` and loads every entry in its `persistent_facts` array as foundational context. One of those facts mandates a Step 0 *before* the per-component loop kicks in: resolve the Figma link from the story's References, enumerate variants from the node, rewrite the story's Tasks to match the 5-step loop, strengthen the Acceptance Criteria, and HALT if scope is too big to fit a single story. The refined story is persisted back to disk before any code is written. Only then does the loop start.
+
+**The module is an execution discipline layer.** Step 0 + the 5-step loop + the visual-check gate + the token-only rule + the Atomic-Design enforcement + the canvas round-trip — all loaded as `persistent_facts` so every `bmad-dev-story` run is bound by them regardless of who authored the story or how generic the original tasks were. That is where the module earns its keep.
+
+
 ### After install — five things to do
 
 1. **In Claude Code**, run `/mcp` and approve the `figma` server.

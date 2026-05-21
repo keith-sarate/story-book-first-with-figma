@@ -46,6 +46,30 @@ For every UI component or screen story:
 | Organisms | https://www.figma.com/design/7vcHVM7siztlW4xId0ClVZ/story-book-fisrt-demo?node-id=4-850 | `4:850` | `7vcHVM7siztlW4xId0ClVZ` |
 | Full Screen | https://www.figma.com/design/7vcHVM7siztlW4xId0ClVZ/story-book-fisrt-demo?node-id=4-1015 | `4:1015` | `7vcHVM7siztlW4xId0ClVZ` |
 
+## Step 0 — Refine the incoming story (run ONCE per story, before the loop)
+
+In real projects, the dev agent does not author stories — a PM or architect creates them via `bmad-create-story` from a PRD or epic. What lands in the sprint is typically:
+
+- A title and `As a / I want / So that`
+- Acceptance Criteria scoped to the user-facing behavior
+- A **Figma reference link** in the `References` section
+- Generic Tasks/Subtasks (often: "implement the component", "add tests", "review")
+
+That story is necessary but not sufficient. Before starting the 5-step loop, the dev agent MUST refine the story to encode this workflow's discipline:
+
+1. **Resolve the Figma link.** Pull the `fileKey` and `node-id` out of the link in `References`. Verify the node exists and is reachable via the Figma MCP (`get_code`). If it doesn't resolve, HALT and ask the user.
+2. **Enumerate variants and states** on the Figma node. These become per-variant Tasks and per-variant Storybook stories.
+3. **Rewrite or append the Tasks** so they match the 5-step loop:
+   - Read Figma → Reuse Check → Build → Validate → Sync to Canvas
+   - One task per variant where applicable
+   - Each Build task lists the file path, the props it derives from variants, and the token references
+   - Each Validate task includes the exact `pnpm visual:check` command for that variant
+4. **Strengthen the Acceptance Criteria** so they reference the Visual Validation Loop, the no-hardcoded-tokens rule, and the Storybook-story-per-variant requirement.
+5. **Check scope.** If the story's scope is too big — e.g., "build all the molecules" — HALT and surface to the user that the story should be split using the discovery pattern from `1-2-0-atoms-discovery.md` (one story for discovery, N stories for implementation, one for bulk sync). Do not silently absorb the bigger scope.
+6. **Persist the edits** to the story file before starting implementation, so the refined version is the artifact of record.
+
+Only after the story is refined does the per-component loop below begin.
+
 ## Per-Component Loop (apply to every component in every story)
 
 ```

@@ -139,6 +139,25 @@ From there, every subsequent `dev the next story` builds one atom, one molecule,
 
 The installer never modifies BMad core or module files. It only writes to `_bmad/custom/`, `_bmad-output/`, and project-level paths.
 
+### These stories are scaffolding, not a sprint plan
+
+The files under `_bmad-output/implementation-artifacts/` are **examples** of what a story shaped by this workflow looks like. The real flow in BMad isn't "run the shipped stories in order." It's:
+
+1. A PM or architect picks up a requirement and runs `bmad-create-story` (or an equivalent skill). The story lands in the sprint with **a Figma reference link** in its `References` section pointing at the source frame.
+2. The dev agent picks up that story and executes the 5-step loop against the Figma link — *Read Figma → Reuse Check → Build → Validate → Sync to Canvas* — bound by the `persistent_facts` in `_bmad/custom/bmad-dev-story.toml`.
+
+The shipped stories show **what shape a story needs** for the dev agent to execute against this workflow: a clear scope (one component or layer), a Figma node-id in `References`, Acceptance Criteria that tie back to Figma variants, and Tasks that match the 5-step loop.
+
+**What this module is not:**
+
+- A sprint planner. Stories come from your own `bmad-create-story` runs, driven by PM and architect agents working from PRDs, epics, and design specs. The dev agent **executes** stories; it doesn't author them.
+- A one-size-fits-all sprint plan. A single `1-3-molecules.md` that builds every molecule is fine for a demo with four molecules — it gets unwieldy past six or seven. For larger projects, apply the **discovery pattern** from `1-2-0-atoms-discovery.md` to molecules and organisms too: one story for discovery, N stories for implementation, one story for bulk sync.
+
+**What this module is:**
+
+An **execution discipline layer**. The 5-step loop, the visual-check gate, the token-only rule, the Atomic-Design enforcement, the canvas round-trip — all loaded as `persistent_facts` so every `bmad-dev-story` run is bound by them, regardless of who authored the story. That is where the module earns its keep.
+
+
 ---
 
 ## Installer flags
