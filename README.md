@@ -22,22 +22,30 @@ After install, every UI story your team points the BMad dev agent at follows the
 
 ## Install
 
-In the target project (run from a terminal):
+**From inside your project root** (a terminal in VS Code is fine — files land directly in your working tree and show up in your Source Control panel):
 
 ```bash
-REPO=https://github.com/keith-sarate/story-book-first-with-figma.git
-git clone --depth 1 "$REPO" /tmp/sb-figma
-/tmp/sb-figma/install.sh /path/to/your/project
+bash <(curl -fsSL https://raw.githubusercontent.com/keith-sarate/story-book-first-with-figma/main/install.sh)
 ```
 
-The installer prompts for your Figma file key + four Atomic-Design node-ids (Atoms / Molecules / Organisms / Screen), drops 15 files into the target project, and prints next steps.
+The script fetches its templates, prompts for your Figma file key and four Atomic-Design node-ids (Atoms / Molecules / Organisms / Screen), drops 15 files into the current directory, and prints next steps. Review the diff in VS Code, commit when you're happy.
 
 ### Other install modes
 
-| Mode | When | Command |
-|---|---|---|
-| **One-liner with flags** | CI / scripting | `install.sh <target> --file-key KEY --atoms ID --molecules ID --organisms ID --screen ID` |
-| **Git submodule** | Pin to a revision for a team | `git submodule add "$REPO" vendor/sb-figma && vendor/sb-figma/install.sh .` |
+```bash
+# Non-interactive (CI / scripting) — pass values inline
+bash <(curl -fsSL https://raw.githubusercontent.com/keith-sarate/story-book-first-with-figma/main/install.sh) \
+  . -y --file-key KEY --atoms 4:581 --molecules 4:726 --organisms 4:850 --screen 4:1015
+
+# Or clone first, then run locally (offline, airgapped, or to inspect before running)
+REPO=https://github.com/keith-sarate/story-book-first-with-figma.git
+git clone --depth 1 "$REPO" /tmp/sb-figma
+/tmp/sb-figma/install.sh /path/to/your/project
+
+# Or pin to a revision via git submodule
+git submodule add "$REPO" vendor/sb-figma
+vendor/sb-figma/install.sh .
+```
 
 Run `./install.sh --help` for the full flag list.
 

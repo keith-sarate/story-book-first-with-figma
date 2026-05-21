@@ -58,15 +58,13 @@ The module is a thin **execution discipline layer** on top of standard BMad. The
 
 ## Install and use
 
-In the target project (run from a terminal):
+Open a terminal **inside the project root** you want to add the module to (the integrated terminal in VS Code works — files land in your working tree and show up in the Source Control panel for review). Run:
 
 ```bash
-REPO=https://github.com/keith-sarate/story-book-first-with-figma.git
-git clone --depth 1 "$REPO" /tmp/sb-figma
-/tmp/sb-figma/install.sh /path/to/your/project
+bash <(curl -fsSL https://raw.githubusercontent.com/keith-sarate/story-book-first-with-figma/main/install.sh)
 ```
 
-The installer prompts for your Figma file key and the four Atomic-Design node-ids, drops 15 files into the target project, and prints next steps.
+The script fetches its templates, prompts for your Figma file key and the four Atomic-Design node-ids, drops 15 files into the current directory, and prints next steps. Review the diff in VS Code; commit when you are happy.
 
 After install, three things happen once:
 

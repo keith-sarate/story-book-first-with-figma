@@ -2,11 +2,35 @@
 # Storybook-First with Figma — module installer
 # Installs the workflow manual, BMad dev-story customization, Figma MCP config,
 # visual-check script, and sprint scaffolding into a target project.
+#
+# Two ways to run:
+#   1. Clone the repo, then run ./install.sh /target/path
+#   2. One-liner from inside your project root (no clone needed):
+#        bash <(curl -fsSL https://raw.githubusercontent.com/keith-sarate/story-book-first-with-figma/main/install.sh)
+#      The script detects it is running standalone and fetches its own templates.
 
 set -euo pipefail
 
+REPO_URL="https://github.com/keith-sarate/story-book-first-with-figma.git"
+
 # ─── Locate package root (where this script lives) ─────────────────────────
-PKG_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# If the script is invoked from a real path with a sibling templates/ folder,
+# use that. Otherwise (curl|bash, process substitution, no templates/ next to
+# the script), clone the repo to a temp dir so we have templates/ available.
+
+if [ -n "${BASH_SOURCE[0]:-}" ] \
+   && [ -f "${BASH_SOURCE[0]}" ] \
+   && [ -d "$(dirname "${BASH_SOURCE[0]}")/templates" ]; then
+  PKG_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+else
+  echo "▸ Standalone run — fetching module from ${REPO_URL}..." >&2
+  PKG_ROOT="$(mktemp -d -t sb-figma-XXXXXX)"
+  trap "rm -rf '${PKG_ROOT}'" EXIT INT TERM
+  if ! git clone --depth 1 --quiet "${REPO_URL}" "${PKG_ROOT}" >/dev/null 2>&1; then
+    echo "✗ Failed to clone ${REPO_URL}" >&2
+    exit 1
+  fi
+fi
 TEMPLATES="${PKG_ROOT}/templates"
 
 # ─── Defaults ──────────────────────────────────────────────────────────────

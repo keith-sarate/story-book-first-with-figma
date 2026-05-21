@@ -343,19 +343,14 @@ The persistent_facts say "tokens are the source of truth" but a sufficiently con
 If you read no further, this is what running `install.sh` does for you automatically:
 
 ```bash
-# In the target project root:
-REPO=https://github.com/keith-sarate/story-book-first-with-figma.git
-git clone --depth 1 "$REPO" /tmp/sb-figma
-/tmp/sb-figma/install.sh . \
-  --file-key  <FIGMA_FILE_KEY> \
-  --atoms     <NODE_ID> \
-  --molecules <NODE_ID> \
-  --organisms <NODE_ID> \
-  --screen    <NODE_ID>
+# From inside your project root (VS Code's integrated terminal is fine):
+bash <(curl -fsSL https://raw.githubusercontent.com/keith-sarate/story-book-first-with-figma/main/install.sh)
+# Prompts for FIGMA_FILE_KEY + four node-ids, drops 15 files into the
+# current directory. Review the diff in VS Code's Source Control panel.
 
-# Then in Claude Code:
-> /mcp           # approve figma
-> dev the next story
+# Then in Claude Code (VS Code extension):
+> /mcp                   # approve the figma server
+> /bmad-dev-story        # invoke against a story file path or sprint-status
 ```
 
 Manual port (if you'd rather not use the installer):
