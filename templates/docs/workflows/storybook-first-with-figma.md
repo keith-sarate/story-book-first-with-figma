@@ -12,7 +12,7 @@
 The workflow reads Figma via MCP and writes back via Figma round-trip. Both halves assume the file is structured for atomic design and uses Figma's first-class semantic features:
 
 - **Variables** for colors, spacing, radii, typography — read by `get_variable_defs` and become entries in `src/tokens/tokens.ts`. Without them, tokens are derived from inline values and lose their semantic names.
-- **Atomic frames** — frames named (or grouped under) Atoms, Molecules, Organisms, and the target Screen. The sprint stories reference specific node-ids per layer; missing layers cause the discovery story (1.2.0) to HALT.
+- **Atomic frames** — frames named (or grouped under) Atoms, Molecules, Organisms, and the target Screen. Each UI story references the Figma node-id of its target via the link in References; missing layers cause Step 0's decomposition to HALT.
 - **Components with variants** — each reusable piece is a proper Figma Component with a complete variant set covering states and configurations.
 
 If any of these are missing when the dev agent encounters them at runtime, the agent MUST surface the gap to the user — never silently invent structure or token names. Run a Figma cleanup pass with the design team before starting the sprint; it is consistently cheaper than asking the agent to invent structure that doesn't exist.
@@ -25,7 +25,7 @@ For every UI component or screen story:
 2. **Reuse before creating** — if an earlier story already produced an atom/molecule/organism, import it. Atomic Design is non-negotiable here: molecules use atoms, organisms use molecules, screens use organisms.
 3. **One Storybook story per component** — every component shipped MUST have a `.stories.tsx` file with at least: `Default`, plus a story per documented variant/state in Figma.
 4. **Sync back to canvas to verify** — after the component renders correctly in Storybook, run `prototype-to-figma` (or `figma-generate-design`) against the Storybook URL to push the built component back to a "Built" page in the Figma file. Visually compare against the original frame. This is the verification gate.
-5. **Tokens stay in code** — design tokens (colors, spacing, radii, typography) extracted in Story 1.1 are the single source of truth. Components consume tokens; do not hardcode hex/px.
+5. **Tokens stay in code** — design tokens (colors, spacing, radii, typography) extracted from Figma Variables are the single source of truth (typically in `src/tokens/tokens.ts` and surfaced via `tailwind.config.ts`). Components consume tokens; do not hardcode hex/px.
 
 ## Tooling Stack
 
@@ -39,12 +39,7 @@ For every UI component or screen story:
 
 ## Figma File Reference
 
-| Layer | Figma URL | node-id | fileKey |
-|---|---|---|---|
-| Atoms | https://www.figma.com/design/7vcHVM7siztlW4xId0ClVZ/story-book-fisrt-demo?node-id=4-581 | `4:581` | `7vcHVM7siztlW4xId0ClVZ` |
-| Molecules | https://www.figma.com/design/7vcHVM7siztlW4xId0ClVZ/story-book-fisrt-demo?node-id=4-726 | `4:726` | `7vcHVM7siztlW4xId0ClVZ` |
-| Organisms | https://www.figma.com/design/7vcHVM7siztlW4xId0ClVZ/story-book-fisrt-demo?node-id=4-850 | `4:850` | `7vcHVM7siztlW4xId0ClVZ` |
-| Full Screen | https://www.figma.com/design/7vcHVM7siztlW4xId0ClVZ/story-book-fisrt-demo?node-id=4-1015 | `4:1015` | `7vcHVM7siztlW4xId0ClVZ` |
+The Figma `fileKey` lives in `.env` as `FIGMA_FILE_KEY` (used by `pnpm visual:check`). Each UI story carries its target's `node-id` in its References section — the dev agent reads the link with the Figma MCP during Step 0. Maintain an internal table of the file's Atoms / Molecules / Organisms / Screen frame node-ids if it helps PMs author stories.
 
 ## Step 0 — Refine the incoming story (run ONCE per story, before the loop)
 
@@ -109,7 +104,7 @@ For each component (and for each meaningful story of that component), run:
 pnpm visual:check --story <storybook-story-id> --figma-node <node-id> --out <component>/<variant>
 ```
 
-The `visual:check` script (set up in Story 1.1, lives at [scripts/visual-check.mjs](../../scripts/visual-check.mjs)) does:
+The `visual:check` script (installed at [scripts/visual-check.mjs](../../scripts/visual-check.mjs)) does:
 
 1. Boots a headless Chromium via Playwright at 2x device pixel ratio
 2. Navigates to `http://localhost:6006/iframe.html?id=<storyId>&viewMode=story`

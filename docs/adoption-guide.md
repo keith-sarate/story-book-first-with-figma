@@ -6,9 +6,8 @@ This is the **portable** version of what we built here. Drop these pieces into a
 - A **per-component build loop** that enforces Atomic Design + token discipline
 - An **automated visual validation gate** (Playwright screenshot ↔ Figma REST export)
 - A **canvas round-trip** that pushes built components back to Figma for design parity diff
-- A **discovery → per-component story** pattern for any layer that has many small pieces (atoms, icons, etc.)
 
-The whole thing is BMad-compatible but **not BMad out-of-the-box** — about half is custom. This guide makes the line explicit.
+The whole thing is BMad-compatible but **not BMad out-of-the-box** — about half is custom. This guide makes the line explicit. The installer drops the workflow and tooling into your project; **stories themselves are authored per project** by your PM (via `bmad-create-story` from a PRD, with a Figma link in References).
 
 ---
 
@@ -24,8 +23,7 @@ The whole thing is BMad-compatible but **not BMad out-of-the-box** — about hal
 | `docs/workflows/storybook-first-with-figma.md` (Dev Operating Manual + SVG diagram) | — | **Custom** |
 | Figma MCP server registered in `.mcp.json` | — | **Custom** |
 | `scripts/visual-check.mjs` (Playwright screenshot + Figma REST PNG) | — | **Custom** |
-| `_atom-story-template.md` + `1-2-0-atoms-discovery.md` (dynamic per-atom story scaffolding) | — | **Custom** |
-| Sprint with discovery → per-component → bulk-sync chain | — | **Custom pattern over stock sprint** |
+| Step 0 recursive decomposition + bottom-up build plan for brownfield projects | — | **Custom** |
 | Visual Validation Loop as a verification gate in every story | — | **Custom** |
 | `/prototype-to-figma` round-trip into a `Built / <Layer>` page | — | **Pattern we adopted from Figma's article** |
 
@@ -57,9 +55,9 @@ Optional but recommended: a `docs/` folder already in place, and the project's C
 
 ---
 
-## The 7 things to drop in (in order)
+## The 5 things to drop in (in order)
 
-> **The installer (`install.sh` at the repo root) automates everything in this section.** Read on if you want to understand what gets installed, port the workflow by hand into a context the installer can't reach, or extend the module. Otherwise: `git clone <this repo> && ./install.sh /path/to/project --file-key ... --atoms ...` and skip ahead to "Per-project customization points."
+> **The installer (`install.sh` at the repo root) automates everything in this section.** Read on if you want to understand what gets installed, port the workflow by hand into a context the installer can't reach, or extend the module. Otherwise: `git clone <this repo> && ./install.sh /path/to/project --file-key ...` and skip ahead to "Per-project customization points."
 
 ### 1. The Dev Operating Manual + diagram
 
@@ -68,12 +66,9 @@ Copy these two files from `templates/docs/workflows/` to the target's `docs/work
 - `docs/workflows/storybook-first-with-figma.md`
 - `docs/workflows/storybook-first-with-figma.svg`
 
-Then **edit the manual for the new project**:
+If the new project uses a different stack (e.g. Next.js instead of Vite, CSS-in-JS instead of Tailwind), edit the **"Tooling Stack"** table and rewrite the **"How it runs"** section of the Visual Validation Loop to match.
 
-- Update the **"Figma File Reference"** table — replace `fileKey` and the four `node-id`s with the new project's Figma node-ids for Atoms / Molecules / Organisms / Screen.
-- If the new project uses a different stack (e.g. Next.js instead of Vite, CSS-in-JS instead of Tailwind), edit the **"Tooling Stack"** table and rewrite the **"How it runs"** section of the Visual Validation Loop to match.
-
-> The SVG is generic — it doesn't reference the specific Figma file. Leave it alone unless you change step names.
+> The SVG is generic — it doesn't reference any specific Figma file. Leave it alone unless you change step names.
 
 ### 2. The `bmad-dev-story` customization
 
@@ -111,7 +106,7 @@ In Claude Code, run `/mcp` and approve the `figma` server. The OAuth flow opens 
 
 ### 4. The visual check script + env
 
-The script lives at `scripts/visual-check.mjs` (full template is embedded in Story 1.1's Dev Notes — copy it from there). It depends on:
+The script lives at `templates/scripts/visual-check.mjs` and is copied to `scripts/visual-check.mjs` in the target. It depends on:
 
 ```bash
 pnpm i -D playwright @playwright/test dotenv
@@ -144,61 +139,22 @@ test-results/
 
 Tell each developer who'll run the loop to copy `.env.example` to `.env` and fill in their personal Figma token.
 
-### 5. The story sprint scaffolding
+### 5. Verify it loads
 
-Copy these files from `_bmad-output/implementation-artifacts/` to the target's equivalent path (usually the same: BMad's `bmm.implementation_artifacts` config maps to `{project-root}/_bmad-output/implementation-artifacts`):
-
-- `README.md` — demo guide for stakeholders running the sprint
-- `sprint-status.yaml` — dependency chain
-- `1-1-bootstrap-and-tokens.md` — project setup story
-- `1-2-0-atoms-discovery.md` — discovery story (scaffolds per-atom stories at runtime)
-- `_atom-story-template.md` — template the discovery story stamps out
-- `1-3-molecules.md`
-- `1-4-organisms.md`
-- `1-5-screen.md`
-
-Then **edit per project**:
-
-- In each story, find the Figma node-id references (`4:581`, `4:726`, `4:850`, `4:1015`) and the file key (`7vcHVM7siztlW4xId0ClVZ`). Replace with the target's values.
-- In Story 1.1 (`1-1-bootstrap-and-tokens.md`), the **stack-specific tasks** (Vite + React + Tailwind + Storybook) are baked in. If your target stack differs, swap them. Tasks 6 (visual-check) and the Dev Notes script template stay regardless of stack.
-- In `_atom-story-template.md`, the import path `src/components/atoms/<Atom>/` may not match your conventions — adjust.
-
-### 6. Decide if you also want molecules / organisms split
-
-Out of the box, our sprint splits **atoms** into one story per atom (because atoms are typically many and small) but keeps **molecules / organisms / screen** as monolithic stories.
-
-If the target's Figma has more than ~4 molecules or organisms, replicate the discovery pattern:
-
-1. Create `1-3-0-molecules-discovery.md` (clone `1-2-0-atoms-discovery.md` and adapt)
-2. Create `_molecule-story-template.md` (clone the atom template)
-3. Update `sprint-status.yaml` to chain through the discovery + per-molecule entries
-
-Same recipe for organisms.
-
-The point of splitting is **demo cadence** — one component per `dev the next story` call. If the target isn't a demo, monolithic stories are fine.
-
-### 7. Verify it loads
-
-In the target project, open Claude Code and run:
+In the target project, open Claude Code and run a UI story you've authored (with a Figma link in References):
 
 ```
-> /bmad-help
+> /bmad-dev-story path/to/your/story.md
 ```
 
-Then:
-
-```
-> dev the next story
-```
-
-The dev agent should:
+The dev agent should, in its first response:
 
 1. Greet, load config
 2. Load persistent_facts — confirm the manual at `docs/workflows/storybook-first-with-figma.md` is read into context
-3. Pick up `1-1-bootstrap-and-tokens.md` from sprint-status
-4. Start executing
+3. Classify the story as UI (because of the Figma link) and announce: *"Classified as UI story — Storybook-First workflow active"*
+4. Run Step 0 (refine the story, decompose recursively, produce a bottom-up build plan)
 
-If it doesn't reference the manual in its first response, your customize.toml isn't being picked up — check `_bmad/custom/bmad-dev-story.toml` is at the right path and the `[workflow]` block is structured correctly.
+If it doesn't reference the manual in its first response or skips the classification line, your customize.toml isn't being picked up — check `_bmad/custom/bmad-dev-story.toml` is at the right path and the `[workflow]` block is structured correctly.
 
 ---
 
@@ -254,10 +210,9 @@ Then add a task to the relevant story templates referencing your Chromatic proje
 
 ### Adding a new layer (e.g. Templates between Organisms and Pages)
 
-1. Add `1-4b-templates.md` (clone organisms.md, adjust ACs)
-2. Update `sprint-status.yaml` to insert `1-4b-templates` between `1-4-organisms` and `1-5-screen`
-3. Update folder convention: `src/components/templates/`
-4. Update the customize.toml rule about layering to include templates
+1. Update folder convention: `src/components/templates/`
+2. Update the `persistent_facts` rule in `_bmad/custom/bmad-dev-story.toml` about layering to include the new layer (e.g. `screen ← templates ← organisms ← ...`)
+3. Update the Dev Operating Manual sections that enumerate layers (TL;DR step 2, Verification Gate) to mention the new layer
 
 ### Driving multiple Figma files
 
@@ -268,37 +223,30 @@ If a project has more than one Figma file (e.g. mobile + web), either:
 
 ---
 
-## File reference (what each file does in one line)
+## File reference (what each file the installer drops does)
 
 ```
-docs/
-├── workflows/
-│   ├── storybook-first-with-figma.md   ← Dev Operating Manual: 5-step loop, checklist, rules
-│   └── storybook-first-with-figma.svg  ← Visual workflow diagram (embedded at top of manual)
-├── README.md                            ← Per-project setup guide (Node, pnpm, install steps)
-└── adoption-guide.md                    ← THIS FILE
+docs/workflows/
+├── storybook-first-with-figma.md   ← Dev Operating Manual: 5-step loop, checklist, rules
+└── storybook-first-with-figma.svg  ← Visual workflow diagram (embedded at top of manual)
 
-_bmad/
-└── custom/
-    └── bmad-dev-story.toml              ← Customization: injects the manual as persistent_facts
-
-_bmad-output/implementation-artifacts/
-├── README.md                            ← Demo run guide for stakeholders
-├── sprint-status.yaml                   ← Dependency-chained story order
-├── 1-1-bootstrap-and-tokens.md          ← Project setup + Figma MCP + Playwright + tokens
-├── 1-2-0-atoms-discovery.md             ← Scaffolds per-atom stories from Figma
-├── _atom-story-template.md              ← Template stamped out per atom
-├── 1-2-<n>-<atom>.md                    ← Generated at runtime — one per atom
-├── 1-2-99-atoms-sync.md                 ← Generated at runtime — bulk Figma round-trip
-├── 1-3-molecules.md                     ← Compose atoms → molecules (monolithic)
-├── 1-4-organisms.md                     ← Compose molecules → organisms (monolithic)
-└── 1-5-screen.md                        ← Compose organisms → full screen (demo punchline)
+_bmad/custom/
+└── bmad-dev-story.toml             ← Customization: injects the manual as persistent_facts
 
 scripts/
-└── visual-check.mjs                     ← Playwright screenshot ↔ Figma REST PNG
+└── visual-check.mjs                ← Playwright screenshot ↔ Figma REST PNG
 
-.mcp.json                                 ← Figma MCP server registration
-.env.example                              ← FIGMA_TOKEN, FIGMA_FILE_KEY scaffold
+.mcp.json                            ← Figma MCP server registration
+.env.example                         ← FIGMA_TOKEN, FIGMA_FILE_KEY scaffold
+.gitignore                           ← appended: .env, _visual-checks/, Playwright/Storybook outputs
+```
+
+Per-project artifacts the **target team owns** (not shipped by this module):
+
+```
+_bmad-output/implementation-artifacts/   ← Stories authored by your PM via bmad-create-story
+src/tokens/tokens.ts                     ← Tokens extracted from Figma Variables on first run
+src/components/{atoms,molecules,organisms,...}/   ← Atomic-Design folder structure
 ```
 
 ---
@@ -345,26 +293,25 @@ If you read no further, this is what running `install.sh` does for you automatic
 ```bash
 # From inside your project root (VS Code's integrated terminal is fine):
 bash <(curl -fsSL https://raw.githubusercontent.com/keith-sarate/story-book-first-with-figma/main/install.sh)
-# Prompts for FIGMA_FILE_KEY + four node-ids, drops 15 files into the
-# current directory. Review the diff in VS Code's Source Control panel.
+# Prompts for FIGMA_FILE_KEY, drops 7 files into the current directory.
+# Review the diff in VS Code's Source Control panel.
 
 # Then in Claude Code (VS Code extension):
 > /mcp                   # approve the figma server
-> /bmad-dev-story        # invoke against a story file path or sprint-status
+> /bmad-dev-story        # invoke against a story file authored by your PM
 ```
 
 Manual port (if you'd rather not use the installer):
 
 ```bash
 # In the target project root:
-mkdir -p docs/workflows _bmad/custom scripts _bmad-output/implementation-artifacts
+mkdir -p docs/workflows _bmad/custom scripts
 
-# Copy these files from this module's templates/ verbatim (substitute Figma
-# node-ids/file key inside as you go):
+# Copy these files from this module's templates/ verbatim
+# (substitute FIGMA_FILE_KEY in .env.example with your file key):
 #   templates/docs/workflows/storybook-first-with-figma.md         → docs/workflows/
 #   templates/docs/workflows/storybook-first-with-figma.svg        → docs/workflows/
 #   templates/_bmad/custom/bmad-dev-story.toml                     → _bmad/custom/
-#   templates/_bmad-output/implementation-artifacts/*              → _bmad-output/implementation-artifacts/
 #   templates/scripts/visual-check.mjs                             → scripts/
 #   templates/dotfiles/mcp.json                                    → .mcp.json
 #   templates/dotfiles/env.example                                 → .env.example

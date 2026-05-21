@@ -32,6 +32,23 @@ if (!FIGMA_TOKEN || !FIGMA_FILE_KEY) {
 const outDir = resolve('_visual-checks', values.out);
 await mkdir(outDir, { recursive: true });
 
+// 0) Reachability check — fail fast with a clear message if Storybook is down,
+//    instead of letting Playwright throw a generic navigation timeout.
+const reachUrl = `${values['storybook-url']}/iframe.html`;
+try {
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), 3000);
+  const probe = await fetch(reachUrl, { signal: ctrl.signal });
+  clearTimeout(timer);
+  if (!probe.ok) throw new Error(`HTTP ${probe.status}`);
+} catch (err) {
+  console.error(`✗ Storybook not reachable at ${values['storybook-url']}`);
+  console.error(`  Reason: ${err.message ?? err}`);
+  console.error(`  Fix: start the dev server (e.g. \`pnpm storybook\`) in another terminal and re-run.`);
+  console.error(`  Note: the dev agent should start Storybook in the background before invoking visual:check.`);
+  process.exit(3);
+}
+
 // 1) Storybook screenshot via Playwright at 2x DPR
 const browser = await chromium.launch();
 const ctx = await browser.newContext({ deviceScaleFactor: 2 });

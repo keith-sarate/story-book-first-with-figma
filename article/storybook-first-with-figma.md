@@ -46,9 +46,13 @@ The 5-step loop is per-component. Step 0 decides which loops will run, and in wh
 
 The module is a thin **execution discipline layer** on top of standard BMad. There is no fork, no patched skill — only one customization file and one helper script:
 
-- **`_bmad/custom/bmad-dev-story.toml`** holds the policy. When the user invokes `/bmad-dev-story` in Claude Code (VS Code extension), BMad's customization resolver loads every entry of this file's `persistent_facts` array as foundational context for the run. That is where the 5-step loop, the visual-check gate, the token-only rule, the layer enforcement, and Step 0 live. The agent is bound by these rules regardless of who authored the story.
+- **`_bmad/custom/bmad-dev-story.toml`** holds the policy. When the user invokes `/bmad-dev-story` in Claude Code (VS Code extension), BMad's customization resolver loads every entry of this file's `persistent_facts` array as foundational context for the run. That is where the **scope guard** (UI vs. NON-UI classification), the **preflight checklist** (Figma MCP reachable, `FIGMA_TOKEN` set, Playwright + Storybook present, npm scripts wired), the **Storybook lifecycle** (auto-start in background if not running), the 5-step loop, the visual-check gate, the token-only rule, the layer enforcement, and Step 0 all live. The agent is bound by these rules regardless of who authored the story.
 - **`docs/workflows/storybook-first-with-figma.md`** is the operating manual, loaded as a `file:` reference inside `persistent_facts`. It contains the per-step detail and the Visual Checklist.
-- **`scripts/visual-check.mjs`** is a ~70-line script. Playwright screenshots the Storybook story at 2x DPR; the Figma REST API renders the source node at 2x. Both files land in `_visual-checks/<component>/<variant>/`. The agent (multimodal) reads both and walks the checklist.
+- **`scripts/visual-check.mjs`** is a ~80-line script. Playwright screenshots the Storybook story at 2x DPR; the Figma REST API renders the source node at 2x. Both files land in `_visual-checks/<component>/<variant>/`. The agent (multimodal) reads both and walks the checklist. The script does its own Storybook reachability probe before launching Playwright, so a missing dev server fails with a clear message instead of a generic navigation timeout.
+
+**Scope guard before everything.** The first thing the agent does is classify the story as UI or NON-UI. Backend, infra, schema, docs, and config stories skip the entire workflow and fall back to stock BMad — no Figma fetch, no visual-check, no Storybook requirement. The module only "activates" when it has something to enforce.
+
+**Preflight before Step 0.** For UI stories, the agent runs a 6-item preflight check before any other work: Figma MCP reachable, `.env` has `FIGMA_TOKEN`, `scripts/visual-check.mjs` present, Playwright installed, `package.json` has `visual:check` script, Storybook set up. Each failure HALTs with the **exact** one-line remediation. Users never have to remember the manual setup steps — the agent surfaces them on demand.
 
 **Adoption reality.** Most teams install this into projects that have been running for years. The first stories the team points it at will frequently target an organism or a screen with no atoms in `src/components/atoms/` yet. Step 0 handles this by decomposing the target recursively and building bottom-up in a single dev-story run — atoms first, then molecules, then organisms, then the target. Each component still passes through the 5-step loop and visual validation. The agent only HALTs in three cases: an **UPDATE conflict** (component exists at the right layer but differs from Figma), an **OFF-LAYER find** (component exists in the codebase but outside the atomic folder structure — common in brownfield), or an **explicit scope error** in the original story ("build all the molecules" — should be split via a discovery pattern).
 
@@ -64,15 +68,13 @@ Open a terminal **inside the project root** you want to add the module to (the i
 bash <(curl -fsSL https://raw.githubusercontent.com/keith-sarate/story-book-first-with-figma/main/install.sh)
 ```
 
-The script fetches its templates, prompts for your Figma file key and the four Atomic-Design node-ids, drops 15 files into the current directory, and prints next steps. Review the diff in VS Code; commit when you are happy.
+The script prompts only for your Figma file key, then auto-wires the project: drops 7 files into the current directory, copies `.env.example` to `.env` (with the file key prefilled, `FIGMA_TOKEN` left empty), adds `"visual:check": "node scripts/visual-check.mjs"` to `package.json` scripts, and installs Playwright + dotenv via the detected package manager (`pnpm` / `yarn` / `npm` / `bun`). Each auto-wiring step has an opt-out flag for teams that want full control. The Figma personal access token is **never** asked at install — the agent's preflight check guides the user to set it the first time a UI story runs.
 
-After install, three things happen once:
+After install, **one** thing to do:
 
-1. In Claude Code (VS Code extension), invoke `/mcp` and approve the `figma` server.
-2. `cp .env.example .env` and paste a Figma personal access token from [figma.com/settings](https://www.figma.com/settings).
-3. Open Claude Code and invoke `/bmad-dev-story` with the path to the story you want to run — for example, a story your PM created from a PRD with a Figma link in its References section.
+- Open `.env` and paste a Figma personal access token in `FIGMA_TOKEN` ([mint one at figma.com/settings](https://www.figma.com/settings) → Personal access tokens).
 
-The dev agent picks up the story, executes Step 0 (refinement + recursive build plan), confirms with you if more than three components will be created, then runs the 5-step loop per component, bottom-up. Every component lands in the correct layer folder, every Storybook story passes the Visual Checklist, every result is pushed back to Figma on a `Built / <Layer>` page.
+Then invoke `/bmad-dev-story` with the path to a story your PM authored from a PRD (with a Figma link in its References section). The agent runs the preflight check — if anything else is missing (Figma MCP not yet approved via `/mcp`, Storybook not yet installed, dev server not running), it HALTs with the precise remediation instead of failing cryptically. Once preflight passes, it executes Step 0 (refinement + recursive build plan), confirms with you if more than three components will be created, then runs the 5-step loop per component, bottom-up. Every component lands in the correct layer folder, every Storybook story passes the Visual Checklist, every result is pushed back to Figma on a `Built / <Layer>` page.
 
 ---
 

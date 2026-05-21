@@ -1,9 +1,9 @@
 name: story-book-first-with-figma
-version: 0.1.0
+version: 0.2.0
 description: |
   Storybook-First with Figma — a BMad-compatible adoption module that drops the
-  workflow manual, dev-story customization, Figma MCP wiring, visual validation
-  script, and sprint scaffolding into a target project.
+  workflow manual, dev-story customization, Figma MCP wiring, and visual
+  validation script into a target project.
 
 author: Keith Sarate <keith.sarate@objectedge.com>
 license: MIT
@@ -12,7 +12,7 @@ type: bmad-customization
 requires:
   bmad_core: ">=0.1"
   bmad_modules:
-    - bmm   # for bmad-dev-story and sprint orchestration
+    - bmm   # for bmad-dev-story
   runtime:
     node: ">=20"
     pnpm: ">=9"
@@ -28,22 +28,6 @@ installs:
       source: templates/docs/workflows/storybook-first-with-figma.svg
     - target: _bmad/custom/bmad-dev-story.toml
       source: templates/_bmad/custom/bmad-dev-story.toml
-    - target: _bmad-output/implementation-artifacts/README.md
-      source: templates/_bmad-output/implementation-artifacts/README.md
-    - target: _bmad-output/implementation-artifacts/sprint-status.yaml
-      source: templates/_bmad-output/implementation-artifacts/sprint-status.yaml
-    - target: _bmad-output/implementation-artifacts/1-1-bootstrap-and-tokens.md
-      source: templates/_bmad-output/implementation-artifacts/1-1-bootstrap-and-tokens.md
-    - target: _bmad-output/implementation-artifacts/1-2-0-atoms-discovery.md
-      source: templates/_bmad-output/implementation-artifacts/1-2-0-atoms-discovery.md
-    - target: _bmad-output/implementation-artifacts/_atom-story-template.md
-      source: templates/_bmad-output/implementation-artifacts/_atom-story-template.md
-    - target: _bmad-output/implementation-artifacts/1-3-molecules.md
-      source: templates/_bmad-output/implementation-artifacts/1-3-molecules.md
-    - target: _bmad-output/implementation-artifacts/1-4-organisms.md
-      source: templates/_bmad-output/implementation-artifacts/1-4-organisms.md
-    - target: _bmad-output/implementation-artifacts/1-5-screen.md
-      source: templates/_bmad-output/implementation-artifacts/1-5-screen.md
     - target: scripts/visual-check.mjs
       source: templates/scripts/visual-check.mjs
       mode: "0755"
@@ -60,24 +44,7 @@ variables:
   FIGMA_FILE_KEY:
     description: The file key from your Figma URL (the part after /design/)
     required: true
-  FIGMA_FILE_NAME:
-    description: Slugified file name (the kebab-case bit after the file key in URLs)
-    required: false
-    default: "your-figma-file"
-  NODE_ID_ATOMS:
-    description: "Figma node-id of the Atoms frame, in `N:NNN` form (e.g. 4:581)"
-    required: true
-  NODE_ID_MOLECULES:
-    description: "Figma node-id of the Molecules frame"
-    required: true
-  NODE_ID_ORGANISMS:
-    description: "Figma node-id of the Organisms frame"
-    required: true
-  NODE_ID_SCREEN:
-    description: "Figma node-id of the full-screen frame"
-    required: true
 
 postinstall:
-  - "Open Claude Code → /mcp → approve `figma`"
-  - "Copy .env.example to .env and fill FIGMA_TOKEN"
-  - "Run: dev the next story    # picks up 1-1-bootstrap-and-tokens.md"
+  - "Open .env and paste a Figma personal access token in FIGMA_TOKEN (the installer creates .env from .env.example with the file key already filled)"
+  - "Author UI stories with a Figma link in References; the dev agent runs a preflight check and then Step 0 (refinement + recursive build plan) on each one — it will guide you through /mcp approval and any other missing setup on first run"
