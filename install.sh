@@ -8,12 +8,12 @@
 # Two ways to run:
 #   1. Clone the repo, then run ./install.sh /target/path
 #   2. One-liner from inside your project root (no clone needed):
-#        bash <(curl -fsSL https://raw.githubusercontent.com/keith-sarate/story-book-first-with-figma/main/install.sh)
+#        bash <(curl -fsSL https://raw.githubusercontent.com/objectedge/story-book-first-with-figma/main/install.sh)
 #      The script detects it is running standalone and fetches its own templates.
 
 set -euo pipefail
 
-REPO_URL="https://github.com/keith-sarate/story-book-first-with-figma.git"
+REPO_URL="https://github.com/objectedge/story-book-first-with-figma.git"
 
 # ─── Locate package root (where this script lives) ─────────────────────────
 # If the script is invoked from a real path with a sibling templates/ folder,

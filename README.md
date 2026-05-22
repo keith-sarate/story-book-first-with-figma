@@ -37,10 +37,10 @@ Both modes ship the same workflow manual, visual-check script, Figma MCP wiring,
 
 ```bash
 # BMad mode (default) — drops _bmad/custom/bmad-dev-story.toml
-bash <(curl -fsSL https://raw.githubusercontent.com/keith-sarate/story-book-first-with-figma/main/install.sh)
+bash <(curl -fsSL https://raw.githubusercontent.com/objectedge/story-book-first-with-figma/main/install.sh)
 
 # Skill mode — drops .claude/skills/storybook-figma/SKILL.md (no BMad needed)
-bash <(curl -fsSL https://raw.githubusercontent.com/keith-sarate/story-book-first-with-figma/main/install.sh) . --mode skill
+bash <(curl -fsSL https://raw.githubusercontent.com/objectedge/story-book-first-with-figma/main/install.sh) . --mode skill
 ```
 
 The script fetches its templates, prompts for your Figma file key, drops 7 files into the current directory, copies `.env.example` to `.env`, adds `visual:check` to your `package.json` scripts, installs Playwright + dotenv via your detected package manager, and prints next steps. Review the diff in VS Code, commit when you're happy.
@@ -51,11 +51,11 @@ The script fetches its templates, prompts for your Figma file key, drops 7 files
 
 ```bash
 # Non-interactive (CI / scripting) — pass the file key inline
-bash <(curl -fsSL https://raw.githubusercontent.com/keith-sarate/story-book-first-with-figma/main/install.sh) \
+bash <(curl -fsSL https://raw.githubusercontent.com/objectedge/story-book-first-with-figma/main/install.sh) \
   . -y --file-key KEY
 
 # Or clone first, then run locally (offline, airgapped, or to inspect before running)
-REPO=https://github.com/keith-sarate/story-book-first-with-figma.git
+REPO=https://github.com/objectedge/story-book-first-with-figma.git
 git clone --depth 1 "$REPO" /tmp/sb-figma
 /tmp/sb-figma/install.sh /path/to/your/project
 
@@ -121,6 +121,7 @@ storybook-first-with-figma/
 ├── docs/adoption-guide.md   reference playbook for porting by hand or extending
 ├── install.sh               the installer (supports --mode bmad|skill)
 ├── module.yaml              declarative manifest
+├── scripts/build-pdfs.sh    rebuild article + presentation PDFs from .md sources
 └── templates/               every file the installer drops into a target project
     ├── _bmad/               BMad-mode customization (default)
     ├── skill/               Skill-mode SKILL.md (--mode skill)
@@ -128,6 +129,19 @@ storybook-first-with-figma/
     ├── scripts/             visual-check.mjs (shared)
     └── dotfiles/            .mcp.json, .env.example, .gitignore append (shared)
 ```
+
+### Rebuilding the PDFs
+
+After editing `article/storybook-first-with-figma.md` or `article/presentation.md`:
+
+```bash
+scripts/build-pdfs.sh                  # both
+scripts/build-pdfs.sh article          # long-form only
+scripts/build-pdfs.sh presentation     # slide deck only
+scripts/build-pdfs.sh clean            # delete generated PDFs
+```
+
+Tooling (`md-to-pdf` + `@marp-team/marp-cli`) is fetched on demand via `npx`; first run needs network access, subsequent runs use the npm cache.
 
 ---
 

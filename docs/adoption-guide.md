@@ -292,7 +292,7 @@ If you read no further, this is what running `install.sh` does for you automatic
 
 ```bash
 # From inside your project root (VS Code's integrated terminal is fine):
-bash <(curl -fsSL https://raw.githubusercontent.com/keith-sarate/story-book-first-with-figma/main/install.sh)
+bash <(curl -fsSL https://raw.githubusercontent.com/objectedge/story-book-first-with-figma/main/install.sh)
 # Prompts for FIGMA_FILE_KEY, drops 7 files into the current directory.
 # Review the diff in VS Code's Source Control panel.
 

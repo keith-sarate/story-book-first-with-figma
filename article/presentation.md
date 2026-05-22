@@ -156,7 +156,7 @@ From inside the project root (a VS Code terminal works — files land in your wo
 
 ```bash
 bash <(curl -fsSL https://raw.githubusercontent.com/\
-keith-sarate/story-book-first-with-figma/main/install.sh)
+objectedge/story-book-first-with-figma/main/install.sh)
 ```
 
 The script:
@@ -220,7 +220,7 @@ Stories themselves are **per-project** — authored by your PM via `bmad-create-
 keith.sarate@objectedge.com
 
 **Repository**
-github.com/keith-sarate/story-book-first-with-figma
+github.com/objectedge/story-book-first-with-figma
 
 **Article (PDF)**
 article/storybook-first-with-figma.pdf

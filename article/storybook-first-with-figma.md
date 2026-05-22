@@ -65,7 +65,7 @@ The module is a thin **execution discipline layer** on top of standard BMad. The
 Open a terminal **inside the project root** you want to add the module to (the integrated terminal in VS Code works — files land in your working tree and show up in the Source Control panel for review). Run:
 
 ```bash
-bash <(curl -fsSL https://raw.githubusercontent.com/keith-sarate/story-book-first-with-figma/main/install.sh)
+bash <(curl -fsSL https://raw.githubusercontent.com/objectedge/story-book-first-with-figma/main/install.sh)
 ```
 
 The script prompts only for your Figma file key, then auto-wires the project: drops 7 files into the current directory, copies `.env.example` to `.env` (with the file key prefilled, `FIGMA_TOKEN` left empty), adds `"visual:check": "node scripts/visual-check.mjs"` to `package.json` scripts, and installs Playwright + dotenv via the detected package manager (`pnpm` / `yarn` / `npm` / `bun`). Each auto-wiring step has an opt-out flag for teams that want full control. The Figma personal access token is **never** asked at install — the agent's preflight check guides the user to set it the first time a UI story runs.
@@ -78,4 +78,4 @@ Then invoke `/bmad-dev-story` with the path to a story your PM authored from a P
 
 ---
 
-**Repository:** [github.com/keith-sarate/story-book-first-with-figma](https://github.com/keith-sarate/story-book-first-with-figma) · **License:** MIT
+**Repository:** [github.com/objectedge/story-book-first-with-figma](https://github.com/objectedge/story-book-first-with-figma) · **License:** MIT
