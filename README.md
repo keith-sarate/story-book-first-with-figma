@@ -37,10 +37,10 @@ Both modes ship the same workflow manual, visual-check script, Figma MCP wiring,
 
 ```bash
 # BMad mode (default) — drops _bmad/custom/bmad-dev-story.toml
-bash <(curl -fsSL https://raw.githubusercontent.com/objectedge/story-book-first-with-figma/main/install.sh)
+bash <(curl -fsSL https://raw.githubusercontent.com/objectedge/storybook-first-with-figma/main/install.sh)
 
 # Skill mode — drops .claude/skills/storybook-figma/SKILL.md (no BMad needed)
-bash <(curl -fsSL https://raw.githubusercontent.com/objectedge/story-book-first-with-figma/main/install.sh) . --mode skill
+bash <(curl -fsSL https://raw.githubusercontent.com/objectedge/storybook-first-with-figma/main/install.sh) . --mode skill
 ```
 
 The script fetches its templates, prompts for your Figma file key, drops 7 files into the current directory, copies `.env.example` to `.env`, adds `visual:check` to your `package.json` scripts, installs Playwright + dotenv via your detected package manager, and prints next steps. Review the diff in VS Code, commit when you're happy.
@@ -51,11 +51,11 @@ The script fetches its templates, prompts for your Figma file key, drops 7 files
 
 ```bash
 # Non-interactive (CI / scripting) — pass the file key inline
-bash <(curl -fsSL https://raw.githubusercontent.com/objectedge/story-book-first-with-figma/main/install.sh) \
+bash <(curl -fsSL https://raw.githubusercontent.com/objectedge/storybook-first-with-figma/main/install.sh) \
   . -y --file-key KEY
 
 # Or clone first, then run locally (offline, airgapped, or to inspect before running)
-REPO=https://github.com/objectedge/story-book-first-with-figma.git
+REPO=https://github.com/objectedge/storybook-first-with-figma.git
 git clone --depth 1 "$REPO" /tmp/sb-figma
 /tmp/sb-figma/install.sh /path/to/your/project
 

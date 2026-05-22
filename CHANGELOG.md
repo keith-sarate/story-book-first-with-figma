@@ -45,6 +45,6 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 - Article (PDF + Markdown) explaining the workflow and how to adopt it
 - `docs/adoption-guide.md` — reference-style playbook for porting the workflow by hand
 
-[0.3.0]: https://github.com/objectedge/story-book-first-with-figma/releases/tag/v0.3.0
-[0.2.0]: https://github.com/objectedge/story-book-first-with-figma/releases/tag/v0.2.0
-[0.1.0]: https://github.com/objectedge/story-book-first-with-figma/releases/tag/v0.1.0
+[0.3.0]: https://github.com/objectedge/storybook-first-with-figma/releases/tag/v0.3.0
+[0.2.0]: https://github.com/objectedge/storybook-first-with-figma/releases/tag/v0.2.0
+[0.1.0]: https://github.com/objectedge/storybook-first-with-figma/releases/tag/v0.1.0
